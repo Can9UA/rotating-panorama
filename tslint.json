@@ -1,0 +1,29 @@
+{
+  "extends": "tslint:latest",
+  
+  "rules": {
+    "indent": [true, "spaces"],
+    "quotemark": [true, "single"],
+    "no-console": false,
+    "no-debugger": false,
+    "no-empty": false,
+    "eofline": false,
+    "no-trailing-whitespace": false,
+    "no-consecutive-blank-lines": false,
+    "object-literal-sort-keys": false,
+    "trailing-comma": false,
+    "only-arrow-functions": false,
+    "space-before-function-paren": false,
+    "no-namespace": false,
+    "max-classes-per-file": false
+  },
+  
+  "jsRules": {
+    "indent": [true, "spaces"],
+    "quotemark": [true, "single"],
+    "no-console": false,
+    "no-debugger": false,
+    "no-empty": false,
+    "eofline": false
+  }
+}

@@ -1,0 +1,12 @@
+# use glob syntax.
+syntax: glob
+
+.sass-cache
+node_modules
+bower_components
+input
+public
+build
+.idea
+.sublime-workspace
+.zip
