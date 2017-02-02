@@ -1,0 +1,12 @@
+.rotating-panorama {
+  cursor: pointer;
+  cursor: -webkit-grab;
+  cursor: grab; /*grabbing*/
+}
+.rotating-panorama-view img {
+  width: 100%;
+  height: auto;
+}
+.rotating-panorama-pagination {
+  text-align: center;
+}
