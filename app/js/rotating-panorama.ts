@@ -71,7 +71,6 @@ class Panorama {
 
         that.prevFrame();
       });
-
       elems.btnPrev.addEventListener('mousedown', function (e) {
         e.preventDefault();
 
@@ -81,6 +80,9 @@ class Panorama {
       });
 
       elems.btnPrev.addEventListener('mouseup', function () {
+        clearInterval(intervalPrev);
+      });
+      elems.btnPrev.addEventListener('mouseleave', function () {
         clearInterval(intervalPrev);
       });
     }
@@ -93,7 +95,6 @@ class Panorama {
 
         that.nextFrame();
       });
-
       elems.btnNext.addEventListener('mousedown', function (e) {
         e.preventDefault();
 
@@ -103,6 +104,9 @@ class Panorama {
       });
 
       elems.btnNext.addEventListener('mouseup', function () {
+        clearInterval(intervalNext);
+      });
+      elems.btnNext.addEventListener('mouseleave', function () {
         clearInterval(intervalNext);
       });
     }

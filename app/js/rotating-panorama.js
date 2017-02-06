@@ -50,6 +50,9 @@ class Panorama {
             elems.btnPrev.addEventListener('mouseup', function () {
                 clearInterval(intervalPrev);
             });
+            elems.btnPrev.addEventListener('mouseleave', function () {
+                clearInterval(intervalPrev);
+            });
         }
         if (elems.btnNext) {
             let intervalNext;
@@ -64,6 +67,9 @@ class Panorama {
                 }, 50);
             });
             elems.btnNext.addEventListener('mouseup', function () {
+                clearInterval(intervalNext);
+            });
+            elems.btnNext.addEventListener('mouseleave', function () {
                 clearInterval(intervalNext);
             });
         }
