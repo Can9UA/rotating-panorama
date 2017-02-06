@@ -135,17 +135,5 @@ class Panorama {
         return this.sourceMask.replace('\$', frame);
     }
 }
-////////////////////////////
-window.onload = function () {
-    const panorama = new Panorama({
-        panorama: '[data-panorama]',
-        panoramaView: '[data-panorama-view]',
-        btnPrev: '[data-panorama-prev]',
-        btnNext: '[data-panorama-next]',
-        preloadImages: true,
-    });
-    console.log(panorama, body);
-    // window.pan = panorama;
-};
 
-//# sourceMappingURL=rotating-panorama.js.map
+//# sourceMappingURL=panorama.js.map

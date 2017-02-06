@@ -3,19 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <title>Rotating panorama</title>
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/rotating-panorama.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/panorama.css">
 </head>
 <body>
   <div class="container">
-    <div class="rotating-panorama" data-panorama="images/img-$.png" data-panorama-frames="52">
-      <div class="rotating-panorama-view" data-panorama-view></div>
-      <div class="rotating-panorama-pagination">
+    <div class="panorama" data-panorama="images/img-$.png" data-panorama-frames="52">
+      <div class="panorama-view" data-panorama-view></div>
+      <div class="panorama-pagination">
         <button type="button" data-panorama-prev>Prev</button>
         <button type="button" data-panorama-next>Next</button>
       </div>
     </div>
   </div>
-  <script src="js/rotating-panorama.js"></script>
+  <script src="js/panorama.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
