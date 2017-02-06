@@ -11,13 +11,16 @@ interface IElems {
 class Panorama {
   public elems: IElems;
   public frames: number;
+  public sourceMask: string;
   public curFrame: number;
 
   constructor(opt: {
     panorama: string,
     panoramaView: string,
     btnPrev: string,
-    btnNext: string
+    btnNext: string,
+    preloadImages?: boolean,
+    startFrame?: number
   }) {
     this.elems = {
       panorama:     body.querySelector(opt.panorama),
@@ -31,17 +34,30 @@ class Panorama {
     }
 
     this.frames = parseInt(this.elems.panorama.getAttribute('data-panorama-frames'), 10);
-    this.curFrame = 0;
+    this.sourceMask = this.elems.panorama.getAttribute('data-panorama');
 
-    this.addElements(this.elems);
+    if (opt.startFrame <= this.frames && opt.startFrame >= 0) {
+      this.curFrame = opt.startFrame;
+    } else {
+      this.curFrame = 0;
+    }
+
+    this.addElements(this.elems, opt.preloadImages);
     this.addEventListeners(this.elems);
   }
 
-  public addElements(elems: IElems) {
+  public addElements(elems: IElems, preloadImages: boolean = false) {
     // add image
     elems.image = document.createElement('img');
-    elems.image.setAttribute('src', elems.panorama.getAttribute('data-panorama'));
+    elems.image.setAttribute('src', this.getSource(this.curFrame));
     elems.panoramaView.appendChild(elems.image);
+
+    if (preloadImages) {
+      for (let i = 0; i < this.frames; i++) {
+        const img = new Image();
+        img.src = this.getSource(i);
+      }
+    }
   }
 
   public addEventListeners(elems: IElems) {
@@ -100,7 +116,7 @@ class Panorama {
       frame = this.frames - 1;
     }
 
-    this.elems.image.setAttribute('src', `images/img-${frame}.png`);
+    this.elems.image.setAttribute('src', this.getSource(frame));
     this.curFrame = frame;
   }
 
@@ -111,25 +127,31 @@ class Panorama {
       frame = 0;
     }
 
-    this.elems.image.setAttribute('src', `images/img-${frame}.png`);
+    this.elems.image.setAttribute('src', this.getSource(frame));
     this.curFrame = frame;
   }
 
   public goToFrame(frame: number) {
     if (frame < this.frames && frame >= 0) {
-      this.elems.image.setAttribute('src', `images/img-${frame}.png`);
+      this.elems.image.setAttribute('src', this.getSource(frame));
       this.curFrame = frame;
     }
+  }
+
+  private getSource(frame: number): string {
+    return this.sourceMask.replace('\$', frame);
   }
 }
 
 ////////////////////////////
 window.onload = function () {
   const panorama = new Panorama({
-    panorama:     '[data-panorama]',
-    panoramaView: '[data-panorama-view]',
-    btnPrev:      '[data-panorama-prev]',
-    btnNext:      '[data-panorama-next]'
+    panorama:      '[data-panorama]',
+    panoramaView:  '[data-panorama-view]',
+    btnPrev:       '[data-panorama-prev]',
+    btnNext:       '[data-panorama-next]',
+    preloadImages: true,
+    // startFrame:    40
   });
   console.log(panorama, body);
   // window.pan = panorama;

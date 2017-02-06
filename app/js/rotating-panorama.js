@@ -11,15 +11,27 @@ class Panorama {
             return;
         }
         this.frames = parseInt(this.elems.panorama.getAttribute('data-panorama-frames'), 10);
-        this.curFrame = 0;
-        this.addElements(this.elems);
+        this.sourceMask = this.elems.panorama.getAttribute('data-panorama');
+        if (opt.startFrame <= this.frames && opt.startFrame >= 0) {
+            this.curFrame = opt.startFrame;
+        }
+        else {
+            this.curFrame = 0;
+        }
+        this.addElements(this.elems, opt.preloadImages);
         this.addEventListeners(this.elems);
     }
-    addElements(elems) {
+    addElements(elems, preloadImages = false) {
         // add image
         elems.image = document.createElement('img');
-        elems.image.setAttribute('src', elems.panorama.getAttribute('data-panorama'));
+        elems.image.setAttribute('src', this.getSource(this.curFrame));
         elems.panoramaView.appendChild(elems.image);
+        if (preloadImages) {
+            for (let i = 0; i < this.frames; i++) {
+                const img = new Image();
+                img.src = this.getSource(i);
+            }
+        }
     }
     addEventListeners(elems) {
         const that = this;
@@ -62,7 +74,7 @@ class Panorama {
         if (frame <= 0) {
             frame = this.frames - 1;
         }
-        this.elems.image.setAttribute('src', `images/img-${frame}.png`);
+        this.elems.image.setAttribute('src', this.getSource(frame));
         this.curFrame = frame;
     }
     nextFrame() {
@@ -70,14 +82,17 @@ class Panorama {
         if (frame >= this.frames) {
             frame = 0;
         }
-        this.elems.image.setAttribute('src', `images/img-${frame}.png`);
+        this.elems.image.setAttribute('src', this.getSource(frame));
         this.curFrame = frame;
     }
     goToFrame(frame) {
         if (frame < this.frames && frame >= 0) {
-            this.elems.image.setAttribute('src', `images/img-${frame}.png`);
+            this.elems.image.setAttribute('src', this.getSource(frame));
             this.curFrame = frame;
         }
+    }
+    getSource(frame) {
+        return this.sourceMask.replace('\$', frame);
     }
 }
 ////////////////////////////
@@ -86,7 +101,8 @@ window.onload = function () {
         panorama: '[data-panorama]',
         panoramaView: '[data-panorama-view]',
         btnPrev: '[data-panorama-prev]',
-        btnNext: '[data-panorama-next]'
+        btnNext: '[data-panorama-next]',
+        preloadImages: true,
     });
     console.log(panorama, body);
     // window.pan = panorama;
