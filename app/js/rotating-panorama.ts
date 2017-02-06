@@ -1,4 +1,5 @@
 const body = document.querySelector('body');
+const preloadedImages: Element[] = [];
 
 interface IElems {
   panorama: Element;
@@ -13,6 +14,7 @@ class Panorama {
   public frames: number;
   public sourceMask: string;
   public curFrame: number;
+  public move: boolean;
 
   constructor(opt: {
     panorama: string,
@@ -33,45 +35,85 @@ class Panorama {
       return;
     }
 
+    this.move = false;
     this.frames = parseInt(this.elems.panorama.getAttribute('data-panorama-frames'), 10);
     this.sourceMask = this.elems.panorama.getAttribute('data-panorama');
 
+    this.curFrame = 0;
     if (opt.startFrame <= this.frames && opt.startFrame >= 0) {
       this.curFrame = opt.startFrame;
-    } else {
-      this.curFrame = 0;
     }
-
+    
     this.addElements(this.elems, opt.preloadImages);
     this.addEventListeners(this.elems);
   }
 
   public addElements(elems: IElems, preloadImages: boolean = false) {
+    const that = this;
+    
     // add image
     elems.image = document.createElement('img');
     elems.image.setAttribute('src', this.getSource(this.curFrame));
     elems.panoramaView.appendChild(elems.image);
 
     if (preloadImages) {
-      for (let i = 0; i < this.frames; i++) {
-        const img = new Image();
-        img.src = this.getSource(i);
+      function preload(frame: number) {
+        if (frame < that.frames) {
+          const img = new Image();
+          img.onload = function() { preload(frame + 1); };
+          img.src = that.getSource(frame);
+          preloadedImages.push(img);
+        }
       }
+      
+      preload(0);
     }
   }
 
   public addEventListeners(elems: IElems) {
     const that = this;
 
+    if (elems.panoramaView) {
+      elems.panoramaView.addEventListener('mousedown', function (e: MouseEvent) {
+        e.preventDefault();
+        
+        that.move = true;
+      });
+      elems.panoramaView.addEventListener('mouseup', function (e: MouseEvent) {
+        e.preventDefault();
+        
+        that.move = false;
+      });
+      elems.panoramaView.addEventListener('mouseleave', function (e: MouseEvent) {
+        e.preventDefault();
+        
+        that.move = false;
+      });
+      
+      let oldPosLeft: number = 0;
+      elems.panoramaView.addEventListener('mousemove', function (e: MouseEvent) {
+        e.preventDefault();
+        
+        if (!that.move) { return; }
+
+        if (oldPosLeft < e.clientX) {
+          that.prevFrame();
+        } else if (oldPosLeft > e.clientX) {
+          that.nextFrame();
+        }
+        oldPosLeft = e.clientX;
+      });
+    }
+    
     if (elems.btnPrev) {
       let intervalPrev: any;
 
-      elems.btnPrev.addEventListener('click', function (e) {
+      elems.btnPrev.addEventListener('click', function (e: MouseEvent) {
         e.preventDefault();
 
         that.prevFrame();
       });
-      elems.btnPrev.addEventListener('mousedown', function (e) {
+      elems.btnPrev.addEventListener('mousedown', function (e: MouseEvent) {
         e.preventDefault();
 
         intervalPrev = setInterval(function () {
@@ -90,12 +132,12 @@ class Panorama {
     if (elems.btnNext) {
       let intervalNext: any;
 
-      elems.btnNext.addEventListener('click', function (e) {
+      elems.btnNext.addEventListener('click', function (e: MouseEvent) {
         e.preventDefault();
 
         that.nextFrame();
       });
-      elems.btnNext.addEventListener('mousedown', function (e) {
+      elems.btnNext.addEventListener('mousedown', function (e: MouseEvent) {
         e.preventDefault();
 
         intervalNext = setInterval(function () {

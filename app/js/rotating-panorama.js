@@ -1,4 +1,5 @@
 const body = document.querySelector('body');
+const preloadedImages = [];
 class Panorama {
     constructor(opt) {
         this.elems = {
@@ -10,31 +11,64 @@ class Panorama {
         if (!this.elems.panorama || !this.elems.panoramaView) {
             return;
         }
+        this.move = false;
         this.frames = parseInt(this.elems.panorama.getAttribute('data-panorama-frames'), 10);
         this.sourceMask = this.elems.panorama.getAttribute('data-panorama');
+        this.curFrame = 0;
         if (opt.startFrame <= this.frames && opt.startFrame >= 0) {
             this.curFrame = opt.startFrame;
-        }
-        else {
-            this.curFrame = 0;
         }
         this.addElements(this.elems, opt.preloadImages);
         this.addEventListeners(this.elems);
     }
     addElements(elems, preloadImages = false) {
+        const that = this;
         // add image
         elems.image = document.createElement('img');
         elems.image.setAttribute('src', this.getSource(this.curFrame));
         elems.panoramaView.appendChild(elems.image);
         if (preloadImages) {
-            for (let i = 0; i < this.frames; i++) {
-                const img = new Image();
-                img.src = this.getSource(i);
+            function preload(frame) {
+                if (frame < that.frames) {
+                    const img = new Image();
+                    img.onload = function () { preload(frame + 1); };
+                    img.src = that.getSource(frame);
+                    preloadedImages.push(img);
+                }
             }
+            preload(0);
         }
     }
     addEventListeners(elems) {
         const that = this;
+        if (elems.panoramaView) {
+            elems.panoramaView.addEventListener('mousedown', function (e) {
+                e.preventDefault();
+                that.move = true;
+            });
+            elems.panoramaView.addEventListener('mouseup', function (e) {
+                e.preventDefault();
+                that.move = false;
+            });
+            elems.panoramaView.addEventListener('mouseleave', function (e) {
+                e.preventDefault();
+                that.move = false;
+            });
+            let oldPosLeft = 0;
+            elems.panoramaView.addEventListener('mousemove', function (e) {
+                e.preventDefault();
+                if (!that.move) {
+                    return;
+                }
+                if (oldPosLeft < e.clientX) {
+                    that.prevFrame();
+                }
+                else if (oldPosLeft > e.clientX) {
+                    that.nextFrame();
+                }
+                oldPosLeft = e.clientX;
+            });
+        }
         if (elems.btnPrev) {
             let intervalPrev;
             elems.btnPrev.addEventListener('click', function (e) {

@@ -6,6 +6,9 @@
 .rotating-panorama-view img {
   width: 100%;
   height: auto;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
 }
 .rotating-panorama-pagination {
   text-align: center;
