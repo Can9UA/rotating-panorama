@@ -74,10 +74,13 @@ class Panorama {
     const that = this;
 
     if (elems.panoramaView) {
+      let oldLeftPos: number = 0;
+      
       elems.panoramaView.addEventListener('mousedown', function (e: MouseEvent) {
         e.preventDefault();
         
         that.move = true;
+        oldLeftPos = e.clientX;
       });
       elems.panoramaView.addEventListener('mouseup', function (e: MouseEvent) {
         e.preventDefault();
@@ -90,18 +93,17 @@ class Panorama {
         that.move = false;
       });
       
-      let oldPosLeft: number = 0;
       elems.panoramaView.addEventListener('mousemove', function (e: MouseEvent) {
         e.preventDefault();
         
         if (!that.move) { return; }
 
-        if (oldPosLeft < e.clientX) {
+        if (oldLeftPos < e.clientX) {
           that.prevFrame();
-        } else if (oldPosLeft > e.clientX) {
+        } else if (oldLeftPos > e.clientX) {
           that.nextFrame();
         }
-        oldPosLeft = e.clientX;
+        oldLeftPos = e.clientX;
       });
     }
     
