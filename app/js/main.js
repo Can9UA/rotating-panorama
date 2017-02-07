@@ -14,7 +14,7 @@ window.onload = function () {
   const colorSelect = document.querySelector('#color');
   colorSelect.addEventListener('change', function () {
     panorama.updateParameters({
-      color: this.value
+      color: this.value.toString()
     });
   })
 };

@@ -23,7 +23,6 @@ class Panorama {
         this.addElements(this.elems);
         this.addEventListeners(this.elems);
     }
-    // methods
     prevFrame() {
         let frame = this.curFrame - 1;
         if (frame <= 0) {

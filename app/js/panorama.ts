@@ -9,13 +9,17 @@ interface IElems {
   image?: Element;
 }
 
+interface IParameters {
+  [propName: string]: string;
+}
+
 class Panorama {
   public elems: IElems;
   public frames: number;
   public sourceMask: string;
   public curFrame: number;
   public move: boolean;
-  public parameters: any;
+  public parameters: IParameters;
 
   private preload: boolean;
 
@@ -26,7 +30,7 @@ class Panorama {
     btnNext: string,
     preload?: boolean,
     startFrame?: number,
-    parameters?: any // TODO: change to normal object
+    parameters?: IParameters
   }) {
     this.elems = {
       panorama:     body.querySelector(opt.panorama),
@@ -55,7 +59,6 @@ class Panorama {
     this.addEventListeners(this.elems);
   }
 
-  // methods
   public prevFrame() {
     let frame = this.curFrame - 1;
 
@@ -87,13 +90,12 @@ class Panorama {
     }
   }
 
-  public updateParameters(parameters: any) { // TODO: change to normal object
+  public updateParameters(parameters: IParameters) {
     for (const key in parameters) {
       if (parameters.hasOwnProperty(key)) {
         this.parameters[key] = parameters[key].toString();
       }
     }
-
     preloadedImages = []; // remove old cached values
     this.goToFrame(this.curFrame);
 
