@@ -8,7 +8,13 @@
 </head>
 <body>
   <div class="container">
-    <div class="panorama" data-panorama="images/img-$.png" data-panorama-frames="50">
+    <lable for="color">Change Color</lable>
+    <select name="color" id="color">
+      <option value="red" selected>Red</option>
+      <option value="white">White</option>
+    </select>
+    
+    <div class="panorama" data-panorama="images/img-(number)-(color).png" data-panorama-frames="50">
       <div class="panorama-view" data-panorama-view></div>
       <div class="panorama-pagination">
         <button type="button" data-panorama-prev>Prev</button>

@@ -18,8 +18,38 @@ class Panorama {
         if (opt.startFrame <= this.frames && opt.startFrame >= 0) {
             this.curFrame = opt.startFrame;
         }
+        this.parameters = opt.parameters;
         this.addElements(this.elems, opt.preloadImages);
         this.addEventListeners(this.elems);
+    }
+    // methods
+    prevFrame() {
+        let frame = this.curFrame - 1;
+        if (frame <= 0) {
+            frame = this.frames - 1;
+        }
+        this.goToFrame(frame);
+    }
+    nextFrame() {
+        let frame = this.curFrame + 1;
+        if (frame >= this.frames) {
+            frame = 0;
+        }
+        this.goToFrame(frame);
+    }
+    goToFrame(frame) {
+        if (frame <= this.frames && frame >= 0) {
+            this.elems.image.setAttribute('src', this.getSource(frame));
+            this.curFrame = frame;
+        }
+    }
+    updateParameters(parameters) {
+        for (const key in parameters) {
+            if (parameters.hasOwnProperty(key)) {
+                this.parameters[key] = parameters[key].toString();
+            }
+        }
+        this.goToFrame(this.curFrame);
     }
     addElements(elems, preloadImages = false) {
         const that = this;
@@ -31,7 +61,9 @@ class Panorama {
             function preload(frame) {
                 if (frame < that.frames) {
                     const img = new Image();
-                    img.onload = function () { preload(frame + 1); };
+                    img.onload = function () {
+                        preload(frame + 1);
+                    };
                     img.src = that.getSource(frame);
                     preloadedImages.push(img);
                 }
@@ -64,7 +96,7 @@ class Panorama {
                 if (oldLeftPos < e.clientX) {
                     that.prevFrame();
                 }
-                else if (oldLeftPos > e.clientX) {
+                else {
                     that.nextFrame();
                 }
                 oldLeftPos = e.clientX;
@@ -109,31 +141,14 @@ class Panorama {
             });
         }
     }
-    // methods
-    prevFrame() {
-        let frame = this.curFrame - 1;
-        if (frame <= 0) {
-            frame = this.frames - 1;
-        }
-        this.elems.image.setAttribute('src', this.getSource(frame));
-        this.curFrame = frame;
-    }
-    nextFrame() {
-        let frame = this.curFrame + 1;
-        if (frame >= this.frames) {
-            frame = 0;
-        }
-        this.elems.image.setAttribute('src', this.getSource(frame));
-        this.curFrame = frame;
-    }
-    goToFrame(frame) {
-        if (frame < this.frames && frame >= 0) {
-            this.elems.image.setAttribute('src', this.getSource(frame));
-            this.curFrame = frame;
-        }
-    }
     getSource(frame) {
-        return this.sourceMask.replace('\$', frame);
+        let source = this.sourceMask.replace('(number)', frame.toString());
+        for (const key in this.parameters) {
+            if (this.parameters.hasOwnProperty(key)) {
+                source = source.replace(`(${key})`, this.parameters[key].toString());
+            }
+        }
+        return source;
     }
 }
 

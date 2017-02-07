@@ -10,6 +10,4 @@
   -moz-user-select: none;
   user-select: none;
 }
-.panorama-pagination {
-  text-align: center;
-}
+.panorama-pagination { text-align: center; }

@@ -1,4 +1,3 @@
-
 window.onload = function () {
   const panorama = new Panorama({
     panorama:      '[data-panorama]',
@@ -6,8 +5,17 @@ window.onload = function () {
     btnPrev:       '[data-panorama-prev]',
     btnNext:       '[data-panorama-next]',
     preloadImages: true,
+    parameters:    {
+      color: 'red'
+    }
     // startFrame:    40
   });
-  console.log(panorama, body);
-  // window.pan = panorama;
+  
+  const colorSelect = document.querySelector('#color');
+  
+  colorSelect.addEventListener('change', function () {
+    panorama.updateParameters({
+      color: this.value
+    });
+  })
 };
