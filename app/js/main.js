@@ -4,7 +4,7 @@ window.onload = function () {
     panoramaView: '[data-panorama-view]',
     btnPrev:      '[data-panorama-prev]',
     btnNext:      '[data-panorama-next]',
-    //frames:       50,
+    frames:       50,
     preload:      true,
     parameters:   {
       color: 'red'
