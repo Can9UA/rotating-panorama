@@ -1,5 +1,5 @@
 const body = document.querySelector('body');
-const preloadedImages = [];
+let preloadedImages = [];
 class Panorama {
     constructor(opt) {
         this.elems = {
@@ -19,7 +19,8 @@ class Panorama {
             this.curFrame = opt.startFrame;
         }
         this.parameters = opt.parameters;
-        this.addElements(this.elems, opt.preloadImages);
+        this.preload = opt.preload;
+        this.addElements(this.elems);
         this.addEventListeners(this.elems);
     }
     // methods
@@ -50,25 +51,17 @@ class Panorama {
             }
         }
         this.goToFrame(this.curFrame);
+        if (this.preload) {
+            this.preloadImages();
+        }
     }
-    addElements(elems, preloadImages = false) {
-        const that = this;
+    addElements(elems) {
         // add image
         elems.image = document.createElement('img');
         elems.image.setAttribute('src', this.getSource(this.curFrame));
         elems.panoramaView.appendChild(elems.image);
-        if (preloadImages) {
-            function preload(frame) {
-                if (frame < that.frames) {
-                    const img = new Image();
-                    img.onload = function () {
-                        preload(frame + 1);
-                    };
-                    img.src = that.getSource(frame);
-                    preloadedImages.push(img);
-                }
-            }
-            preload(0);
+        if (this.preload) {
+            this.preloadImages();
         }
     }
     addEventListeners(elems) {
@@ -149,6 +142,21 @@ class Panorama {
             }
         }
         return source;
+    }
+    preloadImages(frame = 0) {
+        const that = this;
+        if (frame === 0) {
+            preloadedImages = [];
+        }
+        if (frame < this.frames) {
+            const img = new Image();
+            img.onload = function () {
+                that.preloadImages(frame + 1);
+            };
+            img.src = this.getSource(frame);
+            preloadedImages.push(img);
+        }
+        console.log('preloaded');
     }
 }
 

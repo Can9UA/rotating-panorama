@@ -1,5 +1,5 @@
 const body: HTMLBodyElement = document.querySelector('body');
-const preloadedImages: Element[] = [];
+let preloadedImages: Element[] = [];
 
 interface IElems {
   panorama: Element;
@@ -17,12 +17,14 @@ class Panorama {
   public move: boolean;
   public parameters: any;
 
+  private preload: boolean;
+
   constructor(opt: {
     panorama: string,
     panoramaView: string,
     btnPrev: string,
     btnNext: string,
-    preloadImages?: boolean,
+    preload?: boolean,
     startFrame?: number,
     parameters?: any // TODO: change to normal object
   }) {
@@ -47,8 +49,9 @@ class Panorama {
     }
 
     this.parameters = opt.parameters;
+    this.preload = opt.preload;
 
-    this.addElements(this.elems, opt.preloadImages);
+    this.addElements(this.elems,);
     this.addEventListeners(this.elems);
   }
 
@@ -88,29 +91,20 @@ class Panorama {
     }
     
     this.goToFrame(this.curFrame);
+    
+    if (this.preload) {
+      this.preloadImages();
+    }
   }
 
-  private addElements(elems: IElems, preloadImages: boolean = false) {
-    const that = this;
-
+  private addElements(elems: IElems) {
     // add image
     elems.image = document.createElement('img');
     elems.image.setAttribute('src', this.getSource(this.curFrame));
     elems.panoramaView.appendChild(elems.image);
 
-    if (preloadImages) {
-      function preload(frame: number) {
-        if (frame < that.frames) {
-          const img = new Image();
-          img.onload = function () {
-            preload(frame + 1);
-          };
-          img.src = that.getSource(frame);
-          preloadedImages.push(img);
-        }
-      }
-
-      preload(0);
+    if (this.preload) {
+      this.preloadImages();
     }
   }
 
@@ -212,5 +206,25 @@ class Panorama {
     }
 
     return source;
+  }
+  
+  private preloadImages(frame: number = 0) {
+    const that = this;
+
+    if (frame === 0) {
+      preloadedImages = [];
+    }
+    
+    if (frame < this.frames) {
+      const img = new Image();
+      
+      img.onload = function () {
+        that.preloadImages(frame + 1);
+      };
+      img.src = this.getSource(frame);
+
+      preloadedImages.push(img);
+    }
+    console.log('preloaded');
   }
 }
