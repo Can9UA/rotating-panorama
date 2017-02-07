@@ -42,6 +42,9 @@ class Panorama {
         if (frame <= this.frames && frame >= 0) {
             this.elems.image.setAttribute('src', this.getSource(frame));
             this.curFrame = frame;
+            if (!this.preload) {
+                this.cacheImg(frame);
+            }
         }
     }
     updateParameters(parameters) {
@@ -50,10 +53,20 @@ class Panorama {
                 this.parameters[key] = parameters[key].toString();
             }
         }
+        preloadedImages = []; // remove old cached values
         this.goToFrame(this.curFrame);
         if (this.preload) {
             this.preloadImages();
         }
+    }
+    getSource(frame) {
+        let source = this.sourceMask.replace('(number)', frame.toString());
+        for (const key in this.parameters) {
+            if (this.parameters.hasOwnProperty(key)) {
+                source = source.replace(`(${key})`, this.parameters[key].toString());
+            }
+        }
+        return source;
     }
     addElements(elems) {
         // add image
@@ -134,29 +147,28 @@ class Panorama {
             });
         }
     }
-    getSource(frame) {
-        let source = this.sourceMask.replace('(number)', frame.toString());
-        for (const key in this.parameters) {
-            if (this.parameters.hasOwnProperty(key)) {
-                source = source.replace(`(${key})`, this.parameters[key].toString());
-            }
-        }
-        return source;
-    }
     preloadImages(frame = 0) {
         const that = this;
         if (frame === 0) {
             preloadedImages = [];
         }
         if (frame < this.frames) {
-            const img = new Image();
-            img.onload = function () {
+            const image = this.cacheImg(frame);
+            image.addEventListener('load', function () {
                 that.preloadImages(frame + 1);
-            };
-            img.src = this.getSource(frame);
+            });
+        }
+    }
+    cacheImg(frame) {
+        const img = document.createElement('img');
+        img.setAttribute('src', this.getSource(frame));
+        function filter(element) {
+            return element.getAttribute('src') === img.getAttribute('src');
+        }
+        if (preloadedImages.findIndex(filter) === -1) {
             preloadedImages.push(img);
         }
-        console.log('preloaded');
+        return img;
     }
 }
 
