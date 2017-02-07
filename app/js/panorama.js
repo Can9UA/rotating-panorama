@@ -8,11 +8,12 @@ class Panorama {
             btnPrev: body.querySelector(opt.btnPrev),
             btnNext: body.querySelector(opt.btnNext)
         };
-        if (!this.elems.panorama || !this.elems.panoramaView) {
+        this.frames = opt.frames;
+        if (!this.elems.panorama || !this.elems.panoramaView || !this.frames) {
+            console.error('Panorama plugin: Enter all required parameters!');
             return;
         }
         this.move = false;
-        this.frames = parseInt(this.elems.panorama.getAttribute('data-panorama-frames'), 10);
         this.sourceMask = this.elems.panorama.getAttribute('data-panorama');
         this.curFrame = 0;
         if (opt.startFrame <= this.frames && opt.startFrame >= 0) {

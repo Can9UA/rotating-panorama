@@ -4,11 +4,12 @@ window.onload = function () {
     panoramaView: '[data-panorama-view]',
     btnPrev:      '[data-panorama-prev]',
     btnNext:      '[data-panorama-next]',
+    //frames:       50,
     preload:      true,
     parameters:   {
       color: 'red'
     }
-    // startFrame:    40
+    // startFrame: 40
   });
   
   const colorSelect = document.querySelector('#color');

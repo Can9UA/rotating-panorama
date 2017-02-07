@@ -28,8 +28,9 @@ class Panorama {
     panoramaView: string,
     btnPrev: string,
     btnNext: string,
-    preload?: boolean,
+    frames: number,
     startFrame?: number,
+    preload?: boolean,
     parameters?: IParameters
   }) {
     this.elems = {
@@ -39,12 +40,15 @@ class Panorama {
       btnNext:      body.querySelector(opt.btnNext)
     };
 
-    if (!this.elems.panorama || !this.elems.panoramaView) {
+    this.frames = opt.frames;
+
+    if (!this.elems.panorama || !this.elems.panoramaView || !this.frames) {
+      console.error('Panorama plugin: Enter all required parameters!');
       return;
     }
 
     this.move = false;
-    this.frames = parseInt(this.elems.panorama.getAttribute('data-panorama-frames'), 10);
+
     this.sourceMask = this.elems.panorama.getAttribute('data-panorama');
 
     this.curFrame = 0;
@@ -55,7 +59,7 @@ class Panorama {
     this.parameters = opt.parameters;
     this.preload = opt.preload;
 
-    this.addElements(this.elems,);
+    this.addElements(this.elems);
     this.addEventListeners(this.elems);
   }
 
