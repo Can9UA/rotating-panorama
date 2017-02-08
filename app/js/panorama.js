@@ -11,8 +11,8 @@ class Panorama {
         this.elems = {
             panorama: body.querySelector(opt.panorama),
             panoramaView: body.querySelector(opt.panoramaView),
-            btnPrev: body.querySelector(opt.btnPrev),
-            btnNext: body.querySelector(opt.btnNext)
+            btnLeft: body.querySelector(opt.btnLeft),
+            btnRight: body.querySelector(opt.btnRight)
         };
         this.frames = opt.frames;
         if (!this.elems.panorama || !this.elems.panoramaView || !this.frames) {
@@ -123,46 +123,34 @@ class Panorama {
                 oldLeftPos = curLeft;
             });
         }
-        if (elems.btnPrev) {
-            elems.btnPrev.addEventListener(events.press, function (e) {
-                e.preventDefault();
-                that.prevFrame();
-            });
-            if (!isTouchDevice) {
-                let intervalPrev;
-                elems.btnPrev.addEventListener('mousedown', function (e) {
-                    e.preventDefault();
-                    intervalPrev = setInterval(function () {
-                        that.prevFrame();
-                    }, 50);
-                });
-                elems.btnPrev.addEventListener('mouseup', function () {
-                    clearInterval(intervalPrev);
-                });
-                elems.btnPrev.addEventListener('mouseleave', function () {
-                    clearInterval(intervalPrev);
-                });
-            }
-        }
-        if (elems.btnNext) {
-            elems.btnNext.addEventListener(events.press, function (e) {
+        if (elems.btnLeft) {
+            elems.btnLeft.addEventListener(events.press, function (e) {
                 e.preventDefault();
                 that.nextFrame();
             });
             if (!isTouchDevice) {
-                let intervalNext;
-                elems.btnNext.addEventListener('mousedown', function (e) {
+                let intervalPrev;
+                elems.btnLeft.addEventListener('mousedown', function (e) {
                     e.preventDefault();
-                    intervalNext = setInterval(function () {
-                        that.nextFrame();
-                    }, 50);
+                    intervalPrev = setInterval(() => that.nextFrame(), 50);
                 });
-                elems.btnNext.addEventListener('mouseup', function () {
-                    clearInterval(intervalNext);
+                elems.btnLeft.addEventListener('mouseup', () => clearInterval(intervalPrev));
+                elems.btnLeft.addEventListener('mouseleave', () => clearInterval(intervalPrev));
+            }
+        }
+        if (elems.btnRight) {
+            elems.btnRight.addEventListener(events.press, function (e) {
+                e.preventDefault();
+                that.prevFrame();
+            });
+            if (!isTouchDevice) {
+                let intervalNext;
+                elems.btnRight.addEventListener('mousedown', function (e) {
+                    e.preventDefault();
+                    intervalNext = setInterval(() => that.prevFrame(), 50);
                 });
-                elems.btnNext.addEventListener('mouseleave', function () {
-                    clearInterval(intervalNext);
-                });
+                elems.btnRight.addEventListener('mouseup', () => clearInterval(intervalNext));
+                elems.btnRight.addEventListener('mouseleave', () => clearInterval(intervalNext));
             }
         }
     }

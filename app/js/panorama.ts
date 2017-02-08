@@ -12,8 +12,8 @@ let preloadedImages: Element[] = [];
 interface IElems {
   panorama: Element;
   panoramaView: Element;
-  btnPrev?: Element;
-  btnNext?: Element;
+  btnLeft?: Element;
+  btnRight?: Element;
   image?: Element;
 }
 
@@ -34,8 +34,8 @@ class Panorama {
   constructor(opt: {
     panorama: string,
     panoramaView: string,
-    btnPrev: string,
-    btnNext: string,
+    btnLeft: string,
+    btnRight: string,
     frames: number,
     startFrame?: number,
     preload?: boolean,
@@ -44,8 +44,8 @@ class Panorama {
     this.elems = {
       panorama:     body.querySelector(opt.panorama),
       panoramaView: body.querySelector(opt.panoramaView),
-      btnPrev:      body.querySelector(opt.btnPrev),
-      btnNext:      body.querySelector(opt.btnNext)
+      btnLeft:      body.querySelector(opt.btnLeft),
+      btnRight:      body.querySelector(opt.btnRight)
     };
 
     this.frames = opt.frames;
@@ -187,57 +187,45 @@ class Panorama {
       });
     }
 
-    if (elems.btnPrev) {
-      elems.btnPrev.addEventListener(events.press, function (e: MouseEvent | TouchEvent) {
-        e.preventDefault();
-
-        that.prevFrame();
-      });
-
-      if (!isTouchDevice) {
-        let intervalPrev: any;
-        
-        elems.btnPrev.addEventListener('mousedown', function (e: MouseEvent) {
-          e.preventDefault();
-
-          intervalPrev = setInterval(function () {
-            that.prevFrame();
-          }, 50);
-        });
-
-        elems.btnPrev.addEventListener('mouseup', function () {
-          clearInterval(intervalPrev);
-        });
-        elems.btnPrev.addEventListener('mouseleave', function () {
-          clearInterval(intervalPrev);
-        });
-      }
-    }
-
-    if (elems.btnNext) {
-      elems.btnNext.addEventListener(events.press, function (e: MouseEvent | TouchEvent) {
+    if (elems.btnLeft) {
+      elems.btnLeft.addEventListener(events.press, function (e: MouseEvent | TouchEvent) {
         e.preventDefault();
 
         that.nextFrame();
       });
 
       if (!isTouchDevice) {
-        let intervalNext: any;
+        let intervalPrev: any;
         
-        elems.btnNext.addEventListener('mousedown', function (e: MouseEvent) {
+        elems.btnLeft.addEventListener('mousedown', function (e: MouseEvent) {
           e.preventDefault();
 
-          intervalNext = setInterval(function () {
-            that.nextFrame();
-          }, 50);
+          intervalPrev = setInterval(() => that.nextFrame(), 50);
         });
 
-        elems.btnNext.addEventListener('mouseup', function () {
-          clearInterval(intervalNext);
+        elems.btnLeft.addEventListener('mouseup', () => clearInterval(intervalPrev));
+        elems.btnLeft.addEventListener('mouseleave', () => clearInterval(intervalPrev));
+      }
+    }
+
+    if (elems.btnRight) {
+      elems.btnRight.addEventListener(events.press, function (e: MouseEvent | TouchEvent) {
+        e.preventDefault();
+
+        that.prevFrame();
+      });
+
+      if (!isTouchDevice) {
+        let intervalNext: any;
+        
+        elems.btnRight.addEventListener('mousedown', function (e: MouseEvent) {
+          e.preventDefault();
+
+          intervalNext = setInterval(() => that.prevFrame(), 50);
         });
-        elems.btnNext.addEventListener('mouseleave', function () {
-          clearInterval(intervalNext);
-        });
+
+        elems.btnRight.addEventListener('mouseup', () => clearInterval(intervalNext));
+        elems.btnRight.addEventListener('mouseleave', () => clearInterval(intervalNext));
       }
     }
   }

@@ -2,8 +2,8 @@ window.onload = function () {
   const panorama = new Panorama({
     panorama:     '[data-panorama]',
     panoramaView: '[data-panorama-view]',
-    btnPrev:      '[data-panorama-prev]',
-    btnNext:      '[data-panorama-next]',
+    btnLeft:      '[data-panorama-left]',
+    btnRight:     '[data-panorama-right]',
     frames:       50,
     preload:      true,
     parameters:   {
