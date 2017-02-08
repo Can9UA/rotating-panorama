@@ -28,7 +28,10 @@ class Panorama {
   public curFrame: number;
   public move: boolean;
   public parameters: IParameters;
+
   public getSourceCallback?: Function;
+  public onBeforeChange?: Function;
+  public onAfterChange?: Function;
 
   private preload: boolean;
 
@@ -41,7 +44,9 @@ class Panorama {
     startFrame?: number,
     preload?: boolean,
     parameters?: IParameters,
-    getSourceCallback?: Function
+    getSourceCallback?: Function,
+    onBeforeChange?: Function,
+    onAfterChange?: Function
   }) {
     this.elems = {
       panorama:     body.querySelector(opt.panorama),
@@ -69,6 +74,8 @@ class Panorama {
     this.preload = opt.preload;
 
     this.getSourceCallback = opt.getSourceCallback;
+    this.onBeforeChange = opt.onBeforeChange;
+    this.onAfterChange = opt.onAfterChange;
 
     this.addElements(this.elems);
     this.addEventListeners(this.elems);
@@ -95,6 +102,10 @@ class Panorama {
   }
 
   public goToFrame(frame: number) {
+    if (typeof this.onBeforeChange === 'function') {
+      this.onBeforeChange(this, frame);
+    }
+
     if (frame <= this.numberOfFrames && frame >= 1) {
       this.elems.image.setAttribute('src', this.getSource(frame));
       this.curFrame = frame;
@@ -102,6 +113,10 @@ class Panorama {
       if (!this.preload) {
         this.cacheImg(frame);
       }
+    }
+
+    if (typeof this.onAfterChange === 'function') {
+      this.onAfterChange(this, frame);
     }
   }
 

@@ -28,6 +28,8 @@ class Panorama {
         this.parameters = opt.parameters;
         this.preload = opt.preload;
         this.getSourceCallback = opt.getSourceCallback;
+        this.onBeforeChange = opt.onBeforeChange;
+        this.onAfterChange = opt.onAfterChange;
         this.addElements(this.elems);
         this.addEventListeners(this.elems);
     }
@@ -46,12 +48,18 @@ class Panorama {
         this.goToFrame(frame);
     }
     goToFrame(frame) {
+        if (typeof this.onBeforeChange === 'function') {
+            this.onBeforeChange(this, frame);
+        }
         if (frame <= this.numberOfFrames && frame >= 1) {
             this.elems.image.setAttribute('src', this.getSource(frame));
             this.curFrame = frame;
             if (!this.preload) {
                 this.cacheImg(frame);
             }
+        }
+        if (typeof this.onAfterChange === 'function') {
+            this.onAfterChange(this, frame);
         }
     }
     updateParameters(parameters) {

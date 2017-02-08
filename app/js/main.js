@@ -18,8 +18,10 @@ window.onload = function () {
    * Custom options:
    * 1) startFrame: number - from what frame should panorama start
    * 2) getSourceCallback: function (ui: panorama - all plugin options, frame: number - next frame index): string {
-   *   return source; // path to frame image
-   * }
+   *      return source; // path to frame image
+   *    }
+   * 3) onBeforeChange: function (ui: panorama - all plugin options, frame: number - next frame index) - before frame changed
+   * 4) onAfterChange: function (ui: panorama - all plugin options, frame: number - next frame index) - after frame changed
   ***/
   // init Panorama plugin end
 
