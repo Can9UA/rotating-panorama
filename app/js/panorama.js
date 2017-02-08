@@ -114,13 +114,11 @@ class Panorama {
                 else if (e instanceof TouchEvent) {
                     curLeft = e.targetTouches[0].clientX;
                 }
-                if (oldLeftPos < curLeft) {
-                    that.prevFrame();
+                const diff = Math.abs(oldLeftPos - curLeft);
+                if (diff > 5) {
+                    (oldLeftPos < curLeft) ? that.prevFrame() : that.nextFrame();
+                    oldLeftPos = curLeft;
                 }
-                else {
-                    that.nextFrame();
-                }
-                oldLeftPos = curLeft;
             });
         }
         if (elems.btnLeft) {
@@ -132,7 +130,7 @@ class Panorama {
                 let intervalPrev;
                 elems.btnLeft.addEventListener('mousedown', function (e) {
                     e.preventDefault();
-                    intervalPrev = setInterval(() => that.nextFrame(), 150);
+                    intervalPrev = setInterval(() => that.nextFrame(), 130);
                 });
                 elems.btnLeft.addEventListener('mouseup', () => clearInterval(intervalPrev));
                 elems.btnLeft.addEventListener('mouseleave', () => clearInterval(intervalPrev));
@@ -147,7 +145,7 @@ class Panorama {
                 let intervalNext;
                 elems.btnRight.addEventListener('mousedown', function (e) {
                     e.preventDefault();
-                    intervalNext = setInterval(() => that.prevFrame(), 150);
+                    intervalNext = setInterval(() => that.prevFrame(), 130);
                 });
                 elems.btnRight.addEventListener('mouseup', () => clearInterval(intervalNext));
                 elems.btnRight.addEventListener('mouseleave', () => clearInterval(intervalNext));

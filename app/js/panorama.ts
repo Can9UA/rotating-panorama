@@ -45,7 +45,7 @@ class Panorama {
       panorama:     body.querySelector(opt.panorama),
       panoramaView: body.querySelector(opt.panoramaView),
       btnLeft:      body.querySelector(opt.btnLeft),
-      btnRight:      body.querySelector(opt.btnRight)
+      btnRight:     body.querySelector(opt.btnRight)
     };
 
     this.numberOfFrames = opt.numberOfFrames;
@@ -177,13 +177,13 @@ class Panorama {
           curLeft = e.targetTouches[0].clientX;
         }
 
-        if (oldLeftPos < curLeft) {
-          that.prevFrame();
-        } else {
-          that.nextFrame();
-        }
+        const diff: number = Math.abs(oldLeftPos - curLeft);
 
-        oldLeftPos = curLeft;
+        if (diff > 5) {
+          (oldLeftPos < curLeft) ? that.prevFrame() : that.nextFrame();
+
+          oldLeftPos = curLeft;
+        }
       });
     }
 
@@ -196,11 +196,11 @@ class Panorama {
 
       if (!isTouchDevice) {
         let intervalPrev: any;
-        
+
         elems.btnLeft.addEventListener('mousedown', function (e: MouseEvent) {
           e.preventDefault();
 
-          intervalPrev = setInterval(() => that.nextFrame(), 150);
+          intervalPrev = setInterval(() => that.nextFrame(), 130);
         });
 
         elems.btnLeft.addEventListener('mouseup', () => clearInterval(intervalPrev));
@@ -217,11 +217,11 @@ class Panorama {
 
       if (!isTouchDevice) {
         let intervalNext: any;
-        
+
         elems.btnRight.addEventListener('mousedown', function (e: MouseEvent) {
           e.preventDefault();
 
-          intervalNext = setInterval(() => that.prevFrame(), 150);
+          intervalNext = setInterval(() => that.prevFrame(), 130);
         });
 
         elems.btnRight.addEventListener('mouseup', () => clearInterval(intervalNext));
