@@ -130,11 +130,10 @@ class Panorama {
             });
             if (!isTouchDevice) {
                 let intervalPrev;
-                // elems.btnLeft.addEventListener('mousedown', function (e: MouseEvent) {
-                //   e.preventDefault();
-                //
-                //   intervalPrev = setInterval(() => that.nextFrame(), 50);
-                // });
+                elems.btnLeft.addEventListener('mousedown', function (e) {
+                    e.preventDefault();
+                    intervalPrev = setInterval(() => that.nextFrame(), 150);
+                });
                 elems.btnLeft.addEventListener('mouseup', () => clearInterval(intervalPrev));
                 elems.btnLeft.addEventListener('mouseleave', () => clearInterval(intervalPrev));
             }
@@ -146,11 +145,10 @@ class Panorama {
             });
             if (!isTouchDevice) {
                 let intervalNext;
-                // elems.btnRight.addEventListener('mousedown', function (e: MouseEvent) {
-                //   e.preventDefault();
-                //
-                //   intervalNext = setInterval(() => that.prevFrame(), 50);
-                // });
+                elems.btnRight.addEventListener('mousedown', function (e) {
+                    e.preventDefault();
+                    intervalNext = setInterval(() => that.prevFrame(), 150);
+                });
                 elems.btnRight.addEventListener('mouseup', () => clearInterval(intervalNext));
                 elems.btnRight.addEventListener('mouseleave', () => clearInterval(intervalNext));
             }

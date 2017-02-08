@@ -9,10 +9,9 @@ window.onload = function () {
     parameters:     {
       color: 'red'
     }
-    // startFrame: 40
   });
   
-  const colorSelect = document.querySelector('#color');
+  const colorSelect = document.querySelector('#color-select');
   colorSelect.addEventListener('change', function () {
     panorama.updateParameters({
       color: this.value.toString()
