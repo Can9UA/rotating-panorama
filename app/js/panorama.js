@@ -4,7 +4,6 @@ let events = {
     press: (isTouchDevice) ? 'touchstart' : 'click',
     move: (isTouchDevice) ? 'touchmove' : 'mousemove'
 };
-console.log(isTouchDevice);
 const body = document.querySelector('body');
 let preloadedImages = [];
 class Panorama {
@@ -105,9 +104,15 @@ class Panorama {
             }
             elems.panoramaView.addEventListener(events.move, function (e) {
                 e.preventDefault();
-                const curLeft = (e.targetTouches) ? e.targetTouches[0].clientX : e.clientX;
-                if (!that.move && !isTouchDevice) {
-                    return;
+                let curLeft = 0;
+                if (e instanceof MouseEvent) {
+                    if (!that.move) {
+                        return;
+                    }
+                    curLeft = e.clientX;
+                }
+                else if (e instanceof TouchEvent) {
+                    curLeft = e.targetTouches[0].clientX;
                 }
                 if (oldLeftPos < curLeft) {
                     that.prevFrame();
@@ -119,12 +124,12 @@ class Panorama {
             });
         }
         if (elems.btnPrev) {
-            let intervalPrev;
             elems.btnPrev.addEventListener(events.press, function (e) {
                 e.preventDefault();
                 that.prevFrame();
             });
             if (!isTouchDevice) {
+                let intervalPrev;
                 elems.btnPrev.addEventListener('mousedown', function (e) {
                     e.preventDefault();
                     intervalPrev = setInterval(function () {
@@ -140,12 +145,12 @@ class Panorama {
             }
         }
         if (elems.btnNext) {
-            let intervalNext;
             elems.btnNext.addEventListener(events.press, function (e) {
                 e.preventDefault();
                 that.nextFrame();
             });
             if (!isTouchDevice) {
+                let intervalNext;
                 elems.btnNext.addEventListener('mousedown', function (e) {
                     e.preventDefault();
                     intervalNext = setInterval(function () {

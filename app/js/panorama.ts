@@ -6,8 +6,6 @@ let events = {
   move:  (isTouchDevice) ? 'touchmove' : 'mousemove' as string
 };
 
-console.log(isTouchDevice);
-
 const body: HTMLBodyElement = document.querySelector('body');
 let preloadedImages: Element[] = [];
 
@@ -168,10 +166,15 @@ class Panorama {
 
       elems.panoramaView.addEventListener(events.move, function (e: MouseEvent | TouchEvent) {
         e.preventDefault();
-        const curLeft: number = (e.targetTouches) ? e.targetTouches[0].clientX : e.clientX;
+        let curLeft: number = 0;
 
-        if (!that.move && !isTouchDevice) {
-          return;
+        if (e instanceof MouseEvent) {
+          if (!that.move) {
+            return;
+          }
+          curLeft = e.clientX;
+        } else if (e instanceof TouchEvent) {
+          curLeft = e.targetTouches[0].clientX;
         }
 
         if (oldLeftPos < curLeft) {
@@ -185,8 +188,6 @@ class Panorama {
     }
 
     if (elems.btnPrev) {
-      let intervalPrev: any;
-
       elems.btnPrev.addEventListener(events.press, function (e: MouseEvent | TouchEvent) {
         e.preventDefault();
 
@@ -194,6 +195,8 @@ class Panorama {
       });
 
       if (!isTouchDevice) {
+        let intervalPrev: any;
+        
         elems.btnPrev.addEventListener('mousedown', function (e: MouseEvent) {
           e.preventDefault();
 
@@ -212,8 +215,6 @@ class Panorama {
     }
 
     if (elems.btnNext) {
-      let intervalNext: any;
-
       elems.btnNext.addEventListener(events.press, function (e: MouseEvent | TouchEvent) {
         e.preventDefault();
 
@@ -221,6 +222,8 @@ class Panorama {
       });
 
       if (!isTouchDevice) {
+        let intervalNext: any;
+        
         elems.btnNext.addEventListener('mousedown', function (e: MouseEvent) {
           e.preventDefault();
 
