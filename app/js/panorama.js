@@ -14,15 +14,15 @@ class Panorama {
             btnLeft: body.querySelector(opt.btnLeft),
             btnRight: body.querySelector(opt.btnRight)
         };
-        this.frames = opt.frames;
-        if (!this.elems.panorama || !this.elems.panoramaView || !this.frames) {
+        this.numberOfFrames = opt.numberOfFrames;
+        if (!this.elems.panorama || !this.elems.panoramaView || !this.numberOfFrames) {
             console.error('Panorama plugin: Enter all required parameters!');
             return;
         }
         this.move = false;
         this.sourceMask = this.elems.panorama.getAttribute('data-panorama');
-        this.curFrame = 0;
-        if (opt.startFrame <= this.frames && opt.startFrame >= 0) {
+        this.curFrame = 1;
+        if (opt.startFrame <= this.numberOfFrames && opt.startFrame >= 1) {
             this.curFrame = opt.startFrame;
         }
         this.parameters = opt.parameters;
@@ -32,20 +32,20 @@ class Panorama {
     }
     prevFrame() {
         let frame = this.curFrame - 1;
-        if (frame <= 0) {
-            frame = this.frames - 1;
+        if (frame < 1) {
+            frame = this.numberOfFrames;
         }
         this.goToFrame(frame);
     }
     nextFrame() {
         let frame = this.curFrame + 1;
-        if (frame >= this.frames) {
-            frame = 0;
+        if (frame > this.numberOfFrames) {
+            frame = 1;
         }
         this.goToFrame(frame);
     }
     goToFrame(frame) {
-        if (frame <= this.frames && frame >= 0) {
+        if (frame <= this.numberOfFrames && frame >= 1) {
             this.elems.image.setAttribute('src', this.getSource(frame));
             this.curFrame = frame;
             if (!this.preload) {
@@ -130,10 +130,11 @@ class Panorama {
             });
             if (!isTouchDevice) {
                 let intervalPrev;
-                elems.btnLeft.addEventListener('mousedown', function (e) {
-                    e.preventDefault();
-                    intervalPrev = setInterval(() => that.nextFrame(), 50);
-                });
+                // elems.btnLeft.addEventListener('mousedown', function (e: MouseEvent) {
+                //   e.preventDefault();
+                //
+                //   intervalPrev = setInterval(() => that.nextFrame(), 50);
+                // });
                 elems.btnLeft.addEventListener('mouseup', () => clearInterval(intervalPrev));
                 elems.btnLeft.addEventListener('mouseleave', () => clearInterval(intervalPrev));
             }
@@ -145,21 +146,22 @@ class Panorama {
             });
             if (!isTouchDevice) {
                 let intervalNext;
-                elems.btnRight.addEventListener('mousedown', function (e) {
-                    e.preventDefault();
-                    intervalNext = setInterval(() => that.prevFrame(), 50);
-                });
+                // elems.btnRight.addEventListener('mousedown', function (e: MouseEvent) {
+                //   e.preventDefault();
+                //
+                //   intervalNext = setInterval(() => that.prevFrame(), 50);
+                // });
                 elems.btnRight.addEventListener('mouseup', () => clearInterval(intervalNext));
                 elems.btnRight.addEventListener('mouseleave', () => clearInterval(intervalNext));
             }
         }
     }
-    preloadImages(frame = 0) {
+    preloadImages(frame = 1) {
         const that = this;
-        if (frame === 0) {
+        if (frame === 1) {
             preloadedImages = [];
         }
-        if (frame < this.frames) {
+        if (frame < this.numberOfFrames) {
             const image = this.cacheImg(frame);
             image.addEventListener('load', function () {
                 that.preloadImages(frame + 1);

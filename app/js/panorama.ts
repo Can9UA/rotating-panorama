@@ -23,7 +23,7 @@ interface IParameters {
 
 class Panorama {
   public elems: IElems;
-  public frames: number;
+  public numberOfFrames: number;
   public sourceMask: string;
   public curFrame: number;
   public move: boolean;
@@ -36,7 +36,7 @@ class Panorama {
     panoramaView: string,
     btnLeft: string,
     btnRight: string,
-    frames: number,
+    numberOfFrames: number,
     startFrame?: number,
     preload?: boolean,
     parameters?: IParameters
@@ -48,9 +48,9 @@ class Panorama {
       btnRight:      body.querySelector(opt.btnRight)
     };
 
-    this.frames = opt.frames;
+    this.numberOfFrames = opt.numberOfFrames;
 
-    if (!this.elems.panorama || !this.elems.panoramaView || !this.frames) {
+    if (!this.elems.panorama || !this.elems.panoramaView || !this.numberOfFrames) {
       console.error('Panorama plugin: Enter all required parameters!');
       return;
     }
@@ -59,8 +59,8 @@ class Panorama {
 
     this.sourceMask = this.elems.panorama.getAttribute('data-panorama');
 
-    this.curFrame = 0;
-    if (opt.startFrame <= this.frames && opt.startFrame >= 0) {
+    this.curFrame = 1;
+    if (opt.startFrame <= this.numberOfFrames && opt.startFrame >= 1) {
       this.curFrame = opt.startFrame;
     }
 
@@ -74,8 +74,8 @@ class Panorama {
   public prevFrame() {
     let frame = this.curFrame - 1;
 
-    if (frame <= 0) {
-      frame = this.frames - 1;
+    if (frame < 1) {
+      frame = this.numberOfFrames;
     }
 
     this.goToFrame(frame);
@@ -84,15 +84,15 @@ class Panorama {
   public nextFrame() {
     let frame = this.curFrame + 1;
 
-    if (frame >= this.frames) {
-      frame = 0;
+    if (frame > this.numberOfFrames) {
+      frame = 1;
     }
 
     this.goToFrame(frame);
   }
 
   public goToFrame(frame: number) {
-    if (frame <= this.frames && frame >= 0) {
+    if (frame <= this.numberOfFrames && frame >= 1) {
       this.elems.image.setAttribute('src', this.getSource(frame));
       this.curFrame = frame;
 
@@ -197,11 +197,11 @@ class Panorama {
       if (!isTouchDevice) {
         let intervalPrev: any;
         
-        elems.btnLeft.addEventListener('mousedown', function (e: MouseEvent) {
-          e.preventDefault();
-
-          intervalPrev = setInterval(() => that.nextFrame(), 50);
-        });
+        // elems.btnLeft.addEventListener('mousedown', function (e: MouseEvent) {
+        //   e.preventDefault();
+        //
+        //   intervalPrev = setInterval(() => that.nextFrame(), 50);
+        // });
 
         elems.btnLeft.addEventListener('mouseup', () => clearInterval(intervalPrev));
         elems.btnLeft.addEventListener('mouseleave', () => clearInterval(intervalPrev));
@@ -218,11 +218,11 @@ class Panorama {
       if (!isTouchDevice) {
         let intervalNext: any;
         
-        elems.btnRight.addEventListener('mousedown', function (e: MouseEvent) {
-          e.preventDefault();
-
-          intervalNext = setInterval(() => that.prevFrame(), 50);
-        });
+        // elems.btnRight.addEventListener('mousedown', function (e: MouseEvent) {
+        //   e.preventDefault();
+        //
+        //   intervalNext = setInterval(() => that.prevFrame(), 50);
+        // });
 
         elems.btnRight.addEventListener('mouseup', () => clearInterval(intervalNext));
         elems.btnRight.addEventListener('mouseleave', () => clearInterval(intervalNext));
@@ -230,14 +230,14 @@ class Panorama {
     }
   }
 
-  private preloadImages(frame: number = 0) {
+  private preloadImages(frame: number = 1) {
     const that = this;
 
-    if (frame === 0) {
+    if (frame === 1) {
       preloadedImages = [];
     }
 
-    if (frame < this.frames) {
+    if (frame < this.numberOfFrames) {
       const image = this.cacheImg(frame);
 
       image.addEventListener('load', function () {

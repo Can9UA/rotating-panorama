@@ -1,12 +1,12 @@
 window.onload = function () {
   const panorama = new Panorama({
-    panorama:     '[data-panorama]',
-    panoramaView: '[data-panorama-view]',
-    btnLeft:      '[data-panorama-left]',
-    btnRight:     '[data-panorama-right]',
-    frames:       50,
-    preload:      true,
-    parameters:   {
+    panorama:       '[data-panorama]',
+    panoramaView:   '[data-panorama-view]',
+    btnLeft:        '[data-panorama-left]',
+    btnRight:       '[data-panorama-right]',
+    numberOfFrames: 13,
+    preload:        true,
+    parameters:     {
       color: 'red'
     }
     // startFrame: 40
