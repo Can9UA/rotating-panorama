@@ -1,4 +1,6 @@
 window.onload = function () {
+  const colorSelect = document.querySelector('#color-select');
+  
   const panorama = new Panorama({
     panorama:       '[data-panorama]',
     panoramaView:   '[data-panorama-view]',
@@ -7,11 +9,10 @@ window.onload = function () {
     numberOfFrames: 13,
     preload:        true,
     parameters:     {
-      color: 'red'
+      color: colorSelect.value.toString()
     }
   });
   
-  const colorSelect = document.querySelector('#color-select');
   colorSelect.addEventListener('change', function () {
     panorama.updateParameters({
       color: this.value.toString()
