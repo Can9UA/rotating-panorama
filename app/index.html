@@ -9,12 +9,22 @@
 </head>
 <body>
   <div class="container">
-    <lable for="color">Change Color</lable>
-    <select name="color" id="color-select">
-      <option value="red" selected>Red</option>
-      <option value="blue">Blue</option>
-      <option value="grey">Grey</option>
-    </select>
+    <div class="clearfix">
+      <div class="pull-left">
+        <lable for="color">Change Color</lable>
+        <select name="color" id="color-select">
+          <option value="red" selected>Red</option>
+          <option value="blue">Blue</option>
+          <option value="grey">Grey</option>
+        </select>
+      </div>
+      <div class="pull-right">
+        <button class="color-btn btn-red" type="button" data-color="red" title="Red"></button>
+        <button class="color-btn btn-blue" type="button" data-color="blue" title="Blue"></button>
+        <button class="color-btn btn-grey" type="button" data-color="grey" title="Grey"></button>
+      </div>
+    </div>
+    
     
     <!-- panorama start -->
     <div class="panorama" data-panorama="images/frame-(number)-(color).png">

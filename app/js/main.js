@@ -9,13 +9,22 @@ window.onload = function () {
     numberOfFrames: 13,
     preload:        true,
     parameters:     {
-      color: colorSelect.value.toString()
+      color: colorSelect.value
     }
   });
   
   colorSelect.addEventListener('change', function () {
     panorama.updateParameters({
-      color: this.value.toString()
+      color: this.value
     });
   })
+  
+  const colorBtns = document.querySelectorAll('.color-btn');
+  for (var i = 0, len = colorBtns.length; i < len; i++) {
+    colorBtns[i].addEventListener('click', function () {
+      panorama.updateParameters({
+        color: this.getAttribute('data-color')
+      });
+    })
+  }
 };
