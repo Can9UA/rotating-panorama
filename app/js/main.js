@@ -15,13 +15,13 @@ window.onload = function () {
   });
   
   /***
-  * Custom options
-  * startFrame: number - from what frame should panorama start
-  * getSourceCallback: function (ui: panorama - all plugin options, frame: number - next frame index): string {
+   * Custom options
+   * startFrame: number - from what frame should panorama start
+   * getSourceCallback: function (ui: panorama - all plugin options, frame: number - next frame index): string {
   *   return source; // path to frame image
   * }
-  * 
-  ***/
+   *
+   ***/
   // init Panorama plugin end
   
   // change item color using select start

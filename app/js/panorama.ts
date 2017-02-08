@@ -67,7 +67,7 @@ class Panorama {
 
     this.parameters = opt.parameters;
     this.preload = opt.preload;
-    
+
     this.getSourceCallback = opt.getSourceCallback;
 
     this.addElements(this.elems);
