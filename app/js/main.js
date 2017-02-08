@@ -1,6 +1,6 @@
 window.onload = function () {
   const colorSelect = document.querySelector('#color-select');
-  
+
   // init Panorama plugin start
   const panorama = new Panorama({
     panorama:       '[data-panorama]',
@@ -13,17 +13,16 @@ window.onload = function () {
       color: colorSelect.value // set color according to current select color
     }
   });
-  
+
   /***
-   * Custom options
-   * startFrame: number - from what frame should panorama start
-   * getSourceCallback: function (ui: panorama - all plugin options, frame: number - next frame index): string {
-  *   return source; // path to frame image
-  * }
-   *
-   ***/
+   * Custom options:
+   * 1) startFrame: number - from what frame should panorama start
+   * 2) getSourceCallback: function (ui: panorama - all plugin options, frame: number - next frame index): string {
+   *   return source; // path to frame image
+   * }
+  ***/
   // init Panorama plugin end
-  
+
   // change item color using select start
   colorSelect.addEventListener('change', function () {
     panorama.updateParameters({
@@ -31,7 +30,7 @@ window.onload = function () {
     });
   })
   // change item color using select end
-  
+
   // change item color using buttons start
   const colorBtns = document.querySelectorAll('.color-btn');
   for (var i = 0, len = colorBtns.length; i < len; i++) {
