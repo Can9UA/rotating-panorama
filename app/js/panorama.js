@@ -15,18 +15,19 @@ class Panorama {
             btnRight: body.querySelector(opt.btnRight)
         };
         this.numberOfFrames = opt.numberOfFrames;
-        if (!this.elems.panorama || !this.elems.panoramaView || !this.numberOfFrames) {
+        this.sourceMask = this.elems.panorama.getAttribute('data-panorama');
+        if (!this.elems.panorama || !this.elems.panoramaView || !this.numberOfFrames || !this.sourceMask) {
             console.error('Panorama plugin: Enter all required parameters!');
             return;
         }
         this.move = false;
-        this.sourceMask = this.elems.panorama.getAttribute('data-panorama');
         this.curFrame = 1;
         if (opt.startFrame <= this.numberOfFrames && opt.startFrame >= 1) {
             this.curFrame = opt.startFrame;
         }
         this.parameters = opt.parameters;
         this.preload = opt.preload;
+        this.getSourceCallback = opt.getSourceCallback;
         this.addElements(this.elems);
         this.addEventListeners(this.elems);
     }
@@ -66,6 +67,9 @@ class Panorama {
         }
     }
     getSource(frame) {
+        if (typeof this.getSourceCallback === 'function') {
+            return this.getSourceCallback(this, frame);
+        }
         let source = this.sourceMask.replace('(number)', frame.toString());
         for (const key in this.parameters) {
             if (this.parameters.hasOwnProperty(key)) {

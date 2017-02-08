@@ -13,6 +13,15 @@ window.onload = function () {
       color: colorSelect.value // set color according to current select color
     }
   });
+  
+  /***
+  * Custom options
+  * startFrame: number - from what frame should panorama start
+  * getSourceCallback: function (ui: panorama - all plugin options, frame: number - next frame index): string {
+  *   return source; // path to frame image
+  * }
+  * 
+  ***/
   // init Panorama plugin end
   
   // change item color using select start

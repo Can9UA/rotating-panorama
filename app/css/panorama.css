@@ -1,7 +1,7 @@
 .panorama {
   cursor: pointer;
   cursor: -webkit-grab;
-  cursor: grab; /*grabbing*/
+  cursor: grab;
 }
 .panorama-view img {
   width: 100%;

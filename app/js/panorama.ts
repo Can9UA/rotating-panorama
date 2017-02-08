@@ -28,6 +28,7 @@ class Panorama {
   public curFrame: number;
   public move: boolean;
   public parameters: IParameters;
+  public getSourceCallback?: Function;
 
   private preload: boolean;
 
@@ -39,7 +40,8 @@ class Panorama {
     numberOfFrames: number,
     startFrame?: number,
     preload?: boolean,
-    parameters?: IParameters
+    parameters?: IParameters,
+    getSourceCallback?: Function
   }) {
     this.elems = {
       panorama:     body.querySelector(opt.panorama),
@@ -49,15 +51,14 @@ class Panorama {
     };
 
     this.numberOfFrames = opt.numberOfFrames;
+    this.sourceMask = this.elems.panorama.getAttribute('data-panorama');
 
-    if (!this.elems.panorama || !this.elems.panoramaView || !this.numberOfFrames) {
+    if (!this.elems.panorama || !this.elems.panoramaView || !this.numberOfFrames || !this.sourceMask) {
       console.error('Panorama plugin: Enter all required parameters!');
       return;
     }
 
     this.move = false;
-
-    this.sourceMask = this.elems.panorama.getAttribute('data-panorama');
 
     this.curFrame = 1;
     if (opt.startFrame <= this.numberOfFrames && opt.startFrame >= 1) {
@@ -66,6 +67,8 @@ class Panorama {
 
     this.parameters = opt.parameters;
     this.preload = opt.preload;
+    
+    this.getSourceCallback = opt.getSourceCallback;
 
     this.addElements(this.elems);
     this.addEventListeners(this.elems);
@@ -117,6 +120,10 @@ class Panorama {
   }
 
   public getSource(frame: number): string {
+    if (typeof this.getSourceCallback === 'function') {
+      return this.getSourceCallback(this, frame);
+    }
+
     let source: string = this.sourceMask.replace('(number)', frame.toString());
 
     for (const key in this.parameters) {
