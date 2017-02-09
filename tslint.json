@@ -15,7 +15,8 @@
     "only-arrow-functions": false,
     "space-before-function-paren": false,
     "no-namespace": false,
-    "max-classes-per-file": false
+    "max-classes-per-file": false,
+    "no-string-literal": false
   },
   
   "jsRules": {
@@ -24,6 +25,7 @@
     "no-console": false,
     "no-debugger": false,
     "no-empty": false,
-    "eofline": false
+    "eofline": false,
+    "no-string-literal": false
   }
 }

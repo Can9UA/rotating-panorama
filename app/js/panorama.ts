@@ -1,5 +1,5 @@
 const isTouchDevice: boolean = /MSIE 10.*Touch/.test(navigator.userAgent) ||
-  ('ontouchstart' in window) || !!window.DocumentTouch && document instanceof DocumentTouch;
+  ('ontouchstart' in window) || (window as IWindow).DocumentTouch && document instanceof DocumentTouch;
 
 let events = {
   press: (isTouchDevice) ? 'touchstart' : 'click'     as string,
