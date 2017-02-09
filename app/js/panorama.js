@@ -8,6 +8,7 @@ const body = document.querySelector('body');
 let preloadedImages = [];
 class Panorama {
     constructor(opt) {
+        this.eventsListeners = [];
         this.elems = {
             panorama: body.querySelector(opt.panorama),
             panoramaView: body.querySelector(opt.panoramaView),
@@ -86,6 +87,35 @@ class Panorama {
         }
         return source;
     }
+    destroy() {
+        const elems = this.elems;
+        elems.image = null;
+        preloadedImages = [];
+        if (elems.panoramaView) {
+            if (!isTouchDevice) {
+                elems.panoramaView.removeEventListener('mousedown', this.eventsListeners['panoramaView mousedown']);
+                elems.panoramaView.removeEventListener('mouseup', this.eventsListeners['panoramaView mouseup']);
+                elems.panoramaView.removeEventListener('mouseleave', this.eventsListeners['panoramaView mouseup']);
+            }
+            elems.panoramaView.removeEventListener(events.move, this.eventsListeners['panoramaView move']);
+        }
+        if (elems.btnLeft) {
+            elems.btnLeft.removeEventListener(events.press, this.eventsListeners['btnLeft press']);
+            if (!isTouchDevice) {
+                elems.btnLeft.removeEventListener('mousedown', this.eventsListeners['btnLeft mousedown']);
+                elems.btnLeft.removeEventListener('mouseup', this.eventsListeners['btnLeft mouseup']);
+                elems.btnLeft.removeEventListener('mouseleave', this.eventsListeners['btnLeft mouseup']);
+            }
+        }
+        if (elems.btnRight) {
+            elems.btnRight.removeEventListener(events.press, this.eventsListeners['btnRight press']);
+            if (!isTouchDevice) {
+                elems.btnRight.removeEventListener('mousedown', this.eventsListeners['btnRight mousedown']);
+                elems.btnRight.removeEventListener('mouseup', this.eventsListeners['btnRight mouseup']);
+                elems.btnRight.removeEventListener('mouseleave', this.eventsListeners['btnRight mouseup']);
+            }
+        }
+    }
     addElements(elems) {
         // add image
         elems.image = document.createElement('img');
@@ -100,21 +130,20 @@ class Panorama {
         if (elems.panoramaView) {
             let oldLeftPos = 0;
             if (!isTouchDevice) {
-                elems.panoramaView.addEventListener('mousedown', function (e) {
+                this.eventsListeners['panoramaView mousedown'] = function (e) {
                     e.preventDefault();
                     that.move = true;
                     oldLeftPos = e.clientX;
-                });
-                elems.panoramaView.addEventListener('mouseup', function (e) {
+                };
+                elems.panoramaView.addEventListener('mousedown', this.eventsListeners['panoramaView mousedown']);
+                this.eventsListeners['panoramaView mouseup'] = function (e) {
                     e.preventDefault();
                     that.move = false;
-                });
-                elems.panoramaView.addEventListener('mouseleave', function (e) {
-                    e.preventDefault();
-                    that.move = false;
-                });
+                };
+                elems.panoramaView.addEventListener('mouseup', this.eventsListeners['panoramaView mouseup']);
+                elems.panoramaView.addEventListener('mouseleave', this.eventsListeners['panoramaView mouseup']);
             }
-            elems.panoramaView.addEventListener(events.move, function (e) {
+            this.eventsListeners['panoramaView move'] = function (e) {
                 e.preventDefault();
                 let curLeft = 0;
                 if (e instanceof MouseEvent) {
@@ -131,36 +160,43 @@ class Panorama {
                     (oldLeftPos < curLeft) ? that.prevFrame() : that.nextFrame();
                     oldLeftPos = curLeft;
                 }
-            });
+            };
+            elems.panoramaView.addEventListener(events.move, this.eventsListeners['panoramaView move']);
         }
         if (elems.btnLeft) {
-            elems.btnLeft.addEventListener(events.press, function (e) {
+            let intervalPrev;
+            this.eventsListeners['btnLeft press'] = function (e) {
                 e.preventDefault();
                 that.nextFrame();
-            });
+            };
+            elems.btnLeft.addEventListener(events.press, this.eventsListeners['btnLeft press']);
             if (!isTouchDevice) {
-                let intervalPrev;
-                elems.btnLeft.addEventListener('mousedown', function (e) {
+                this.eventsListeners['btnLeft mousedown'] = function (e) {
                     e.preventDefault();
                     intervalPrev = setInterval(() => that.nextFrame(), 130);
-                });
-                elems.btnLeft.addEventListener('mouseup', () => clearInterval(intervalPrev));
-                elems.btnLeft.addEventListener('mouseleave', () => clearInterval(intervalPrev));
+                };
+                elems.btnLeft.addEventListener('mousedown', this.eventsListeners['btnLeft mousedown']);
+                this.eventsListeners['btnLeft mouseup'] = () => clearInterval(intervalPrev);
+                elems.btnLeft.addEventListener('mouseup', this.eventsListeners['btnLeft mouseup']);
+                elems.btnLeft.addEventListener('mouseleave', this.eventsListeners['btnLeft mouseup']);
             }
         }
         if (elems.btnRight) {
-            elems.btnRight.addEventListener(events.press, function (e) {
+            let intervalNext;
+            this.eventsListeners['btnRight press'] = function (e) {
                 e.preventDefault();
                 that.prevFrame();
-            });
+            };
+            elems.btnRight.addEventListener(events.press, this.eventsListeners['btnRight press']);
             if (!isTouchDevice) {
-                let intervalNext;
-                elems.btnRight.addEventListener('mousedown', function (e) {
+                this.eventsListeners['btnRight mousedown'] = function (e) {
                     e.preventDefault();
                     intervalNext = setInterval(() => that.prevFrame(), 130);
-                });
-                elems.btnRight.addEventListener('mouseup', () => clearInterval(intervalNext));
-                elems.btnRight.addEventListener('mouseleave', () => clearInterval(intervalNext));
+                };
+                elems.btnRight.addEventListener('mousedown', this.eventsListeners['btnRight mousedown']);
+                this.eventsListeners['btnRight mouseup'] = () => clearInterval(intervalNext);
+                elems.btnRight.addEventListener('mouseup', this.eventsListeners['btnRight mouseup']);
+                elems.btnRight.addEventListener('mouseleave', this.eventsListeners['btnRight mouseup']);
             }
         }
     }

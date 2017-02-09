@@ -16,7 +16,9 @@
     "space-before-function-paren": false,
     "no-namespace": false,
     "max-classes-per-file": false,
-    "no-string-literal": false
+    "no-string-literal": false,
+    "object-literal-key-quotes": false,
+    "object-literal-shorthand": false
   },
   
   "jsRules": {
@@ -26,6 +28,7 @@
     "no-debugger": false,
     "no-empty": false,
     "eofline": false,
-    "no-string-literal": false
+    "no-string-literal": false,
+    "object-literal-key-quotes": [false, "as-needed"]
   }
 }
