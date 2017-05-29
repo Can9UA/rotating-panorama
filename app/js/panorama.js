@@ -28,6 +28,9 @@ class Panorama {
         this.onAfterChange = opt.onAfterChange;
         this.addElements(this.elems);
         this.addEventListeners(this.elems);
+        if (opt.autoplay) {
+            this.initAutoplay(opt.autoplay);
+        }
     }
     prevFrame() {
         let frame = this.curFrame - 1;
@@ -238,6 +241,31 @@ class Panorama {
             preloadedImages.push(img);
         }
         return img;
+    }
+    initAutoplay(opt) {
+        this.autoplay = opt;
+        this.autoplay.speed = this.autoplay.speed || 200;
+        this.autoplay.update = (params) => {
+            if (params && params.enabled) {
+                this.autoplay.startRotation();
+            }
+            else {
+                this.autoplay.stopRotation();
+            }
+        };
+        this.autoplay.stopRotation = () => {
+            clearInterval(this.autoplay.interval);
+            this.autoplay.enabled = false;
+        };
+        this.autoplay.startRotation = () => {
+            this.autoplay.interval = setInterval(() => {
+                this.nextFrame();
+            }, this.autoplay.speed);
+            this.autoplay.enabled = true;
+        };
+        if (this.autoplay.enabled) {
+            this.autoplay.startRotation();
+        }
     }
 }
 

@@ -21,6 +21,16 @@ interface IParameters {
   [propName: string]: string;
 }
 
+interface IAutoplay {
+  enabled?: boolean;
+  speed?: number;
+  update?: Function;
+  interval?: any;
+  direction?: 'next' | 'prev';
+  stopRotation?: Function;
+  startRotation?: Function;
+}
+
 interface IOptions {
   panorama: string;
   panoramaView: string;
@@ -30,6 +40,7 @@ interface IOptions {
   startFrame?: number;
   preload?: boolean;
   sourceMask?: string;
+  autoplay?: IAutoplay;
   parameters?: IParameters;
   getSourceCallback?: Function;
   onBeforeChange?: Function;
@@ -43,6 +54,7 @@ class Panorama {
   curFrame: number;
   move: boolean;
   parameters: IParameters;
+  autoplay: IAutoplay;
 
   getSourceCallback?: Function;
   onBeforeChange?: Function;
@@ -78,6 +90,10 @@ class Panorama {
 
     this.addElements(this.elems);
     this.addEventListeners(this.elems);
+
+    if (opt.autoplay) {
+      this.initAutoplay(opt.autoplay);
+    }
   }
 
   prevFrame() {
@@ -346,5 +362,37 @@ class Panorama {
     }
 
     return img;
+  }
+
+  private initAutoplay(opt: IAutoplay) {
+    this.autoplay = opt;
+
+    this.autoplay.speed = this.autoplay.speed || 200;
+
+    this.autoplay.update = (params: IAutoplay) => {
+      if (params && params.enabled) {
+        this.autoplay.startRotation();
+      } else {
+        this.autoplay.stopRotation();
+      }
+    };
+
+    this.autoplay.stopRotation = () => {
+      clearInterval(this.autoplay.interval);
+
+      this.autoplay.enabled = false;
+    };
+
+    this.autoplay.startRotation = () => {
+      this.autoplay.interval = setInterval(() => {
+        this.nextFrame();
+      }, this.autoplay.speed);
+
+      this.autoplay.enabled = true;
+    };
+
+    if (this.autoplay.enabled) {
+      this.autoplay.startRotation();
+    }
   }
 }

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Rotating panorama</title>
+  <link rel="icon" type="image/x-icon" href="favicon.png">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/panorama.css">
+</head>
+<body>
+<div class="container">
+  <div class="clearfix">
+    <div class="pull-left">
+      <!-- change item color using select start -->
+      <lable for="color">Change Color</lable>
+      <select name="color" id="color-select">
+        <option value="red" selected>Red</option>
+        <option value="blue">Blue</option>
+        <option value="grey">Grey</option>
+      </select>
+      <!-- change item color using select end -->
+    </div>
+    <div class="pull-right">
+      <!-- change item color using buttons start -->
+      <button class="color-btn btn-red" type="button" data-color="red" title="Red"></button>
+      <button class="color-btn btn-blue" type="button" data-color="blue" title="Blue"></button>
+      <button class="color-btn btn-grey" type="button" data-color="grey" title="Grey"></button>
+      <!-- change item color using buttons start -->
+    </div>
+  </div>
+
+  <!-- panorama start -->
+  <div class="panorama" data-panorama="images/frame-${index}-${color}.png">
+    <div class="panorama-view" data-panorama-view></div>
+    <div class="panorama-pagination">
+      <button type="button" data-panorama-left><strong>&larr;</strong></button>
+      <button type="button" data-panorama-autoplay><strong>Stop/Start Autoplay</strong></button>
+      <button type="button" data-panorama-right><strong>&rarr;</strong></button>
+    </div>
+  </div>
+  <!-- panorama end -->
+</div>
+<script src="js/panorama.js"></script>
+<script src="js/example-autoplay.js"></script>
+</body>
+</html>
