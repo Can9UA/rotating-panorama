@@ -22,13 +22,14 @@ interface IParameters {
 }
 
 interface IAutoplay {
-  enabled?: boolean;
+  enable?: boolean;
   speed?: number;
-  update?: Function;
   interval?: any;
   direction?: 'next' | 'prev';
-  stopRotation?: Function;
   startRotation?: Function;
+  stopRotation?: Function;
+  reload?: Function;
+  update?: Function;
 }
 
 interface IOptions {
@@ -92,7 +93,11 @@ class Panorama {
     this.addEventListeners(this.elems);
 
     if (opt.autoplay) {
-      this.initAutoplay(opt.autoplay);
+      this.autoplay = this.initAutoplay(opt.autoplay);
+
+      if (this.autoplay.enable) {
+        this.autoplay.startRotation();
+      }
     }
   }
 
@@ -201,6 +206,10 @@ class Panorama {
         elems.btnRight.removeEventListener('mouseleave', this.eventsListeners['btnRight mouseup']);
       }
     }
+
+    if (this.autoplay && this.autoplay.enable) {
+      this.autoplay.stopRotation();
+    }
   }
 
   private getElems(opt: IOptions): IElems {
@@ -213,7 +222,9 @@ class Panorama {
     };
 
     for (const elemName in elems) {
-      if (!opt[elemName]) { continue; }
+      if (!opt[elemName]) {
+        continue;
+      }
 
       if (typeof opt[elemName] === 'string') {
         elems[elemName] = body.querySelector(opt[elemName]);
@@ -364,35 +375,43 @@ class Panorama {
     return img;
   }
 
-  private initAutoplay(opt: IAutoplay) {
-    this.autoplay = opt;
+  private initAutoplay(options: IAutoplay) {
+    const panorama = this;
+    const Autoplay: IAutoplay = {
+      enable: options.enable,
+      speed: options.speed || 200,
+      direction: options.direction || 'next',
 
-    this.autoplay.speed = this.autoplay.speed || 200;
+      startRotation() {
+        this.interval = setInterval(() => {
+          (this.direction === 'prev') ? panorama.prevFrame() : panorama.nextFrame();
+        }, this.speed);
 
-    this.autoplay.update = (params: IAutoplay) => {
-      if (params && params.enabled) {
-        this.autoplay.startRotation();
-      } else {
-        this.autoplay.stopRotation();
+        this.enable = true;
+      },
+
+      stopRotation() {
+        clearInterval(this.interval);
+
+        this.enable = false;
+      },
+
+      reload() {
+        this.stopRotation();
+        this.startRotation();
+      },
+
+      update(params: IAutoplay) {
+        if (!params) { return; }
+
+        if (params.direction) {
+          this.direction = params.direction;
+
+          if (this.enable) { this.reload(); }
+        }
       }
     };
 
-    this.autoplay.stopRotation = () => {
-      clearInterval(this.autoplay.interval);
-
-      this.autoplay.enabled = false;
-    };
-
-    this.autoplay.startRotation = () => {
-      this.autoplay.interval = setInterval(() => {
-        this.nextFrame();
-      }, this.autoplay.speed);
-
-      this.autoplay.enabled = true;
-    };
-
-    if (this.autoplay.enabled) {
-      this.autoplay.startRotation();
-    }
+    return Autoplay;
   }
 }

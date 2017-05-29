@@ -10,9 +10,9 @@ window.onload = function () {
     numberOfFrames: 13,
     preload: true,
     autoplay: {
-      enabled: true,
+      enable: true,
       direction: 'next',
-      speed: 200
+      speed: 110
     },
     parameters: {
       color: colorSelect.value
@@ -39,13 +39,32 @@ window.onload = function () {
   }
   // change item color using buttons end
 
-  // stop/start autoplay start
+  //////////////////////// Autoplay ////////////////////////
   const autoplayBtn = document.querySelector('[data-panorama-autoplay]');
   autoplayBtn.addEventListener('click', function () {
-    panorama.autoplay.update({
-      enabled: !panorama.autoplay.enabled
-    });
+    if (panorama.autoplay.enable) {
+      panorama.autoplay.stopRotation();
+    } else {
+      panorama.autoplay.startRotation();
+    }
   })
-  // stop/start autoplay end
+
+  const autoRotateNext = document.querySelector('[data-panorama-autoplay-next]');
+  autoRotateNext.addEventListener('click', function () {
+    panorama.autoplay.update({
+      direction: 'next'
+    });
+    //panorama.autoplay.reload(); // start rotate even if rotating is stopped now
+  });
+
+  const autoRotatePrev = document.querySelector('[data-panorama-autoplay-prev]');
+  autoRotatePrev.addEventListener('click', function () {
+    panorama.autoplay.update({
+      direction: 'prev'
+    });
+    //panorama.autoplay.reload(); // start rotate even if rotating is stopped now
+  })
+
+  window.panorama = panorama;
 };
 

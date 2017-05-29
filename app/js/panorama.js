@@ -29,7 +29,10 @@ class Panorama {
         this.addElements(this.elems);
         this.addEventListeners(this.elems);
         if (opt.autoplay) {
-            this.initAutoplay(opt.autoplay);
+            this.autoplay = this.initAutoplay(opt.autoplay);
+            if (this.autoplay.enable) {
+                this.autoplay.startRotation();
+            }
         }
     }
     prevFrame() {
@@ -112,6 +115,9 @@ class Panorama {
                 elems.btnRight.removeEventListener('mouseup', this.eventsListeners['btnRight mouseup']);
                 elems.btnRight.removeEventListener('mouseleave', this.eventsListeners['btnRight mouseup']);
             }
+        }
+        if (this.autoplay && this.autoplay.enable) {
+            this.autoplay.stopRotation();
         }
     }
     getElems(opt) {
@@ -242,30 +248,39 @@ class Panorama {
         }
         return img;
     }
-    initAutoplay(opt) {
-        this.autoplay = opt;
-        this.autoplay.speed = this.autoplay.speed || 200;
-        this.autoplay.update = (params) => {
-            if (params && params.enabled) {
-                this.autoplay.startRotation();
+    initAutoplay(options) {
+        const panorama = this;
+        const Autoplay = {
+            enable: options.enable,
+            speed: options.speed || 200,
+            direction: options.direction || 'next',
+            startRotation() {
+                this.interval = setInterval(() => {
+                    (this.direction === 'prev') ? panorama.prevFrame() : panorama.nextFrame();
+                }, this.speed);
+                this.enable = true;
+            },
+            stopRotation() {
+                clearInterval(this.interval);
+                this.enable = false;
+            },
+            reload() {
+                this.stopRotation();
+                this.startRotation();
+            },
+            update(params) {
+                if (!params) {
+                    return;
+                }
+                if (params.direction) {
+                    this.direction = params.direction;
+                    if (this.enable) {
+                        this.reload();
+                    }
+                }
             }
-            else {
-                this.autoplay.stopRotation();
-            }
         };
-        this.autoplay.stopRotation = () => {
-            clearInterval(this.autoplay.interval);
-            this.autoplay.enabled = false;
-        };
-        this.autoplay.startRotation = () => {
-            this.autoplay.interval = setInterval(() => {
-                this.nextFrame();
-            }, this.autoplay.speed);
-            this.autoplay.enabled = true;
-        };
-        if (this.autoplay.enabled) {
-            this.autoplay.startRotation();
-        }
+        return Autoplay;
     }
 }
 
