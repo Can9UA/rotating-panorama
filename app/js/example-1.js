@@ -8,14 +8,35 @@ window.onload = function () {
     btnLeft: '[data-panorama-left]',
     btnRight: '[data-panorama-right]',
     numberOfFrames: 13,
-    preload: true,
+    startFrame: 10,
+    preload: false,
     parameters: {
       color: colorSelect.value // set color according to current select value
+    },
+    getSourceCallback: function (ui, frame) {
+      let source = ui.sourceMask.replace('${number}', frame.toString());
+
+      for (const key in ui.parameters) {
+        if (ui.parameters.hasOwnProperty(key)) {
+          source = source.replace('${' + key + '}', this.parameters[key].toString());
+        }
+      }
+
+      console.log(`source path: ${source}`);
+      return source;
+    },
+    onBeforeChange: function (ui, frame) {
+      console.clear();
+      console.log(`change frame from ${ui.curFrame}`);
+    },
+    onAfterChange: function (ui, frame) {
+      console.log(`change frame to ${ui.curFrame} `);
     }
   });
 
   /***
    * Custom options:
+   * 0) preload: boolean - true(load all images on init) false (load new only when switch frame)
    * 1) startFrame: number - from what frame should panorama start
    * 2) getSourceCallback: function (ui: panorama - all plugin options, frame: number - next frame index): string {
    *      return source; // path to frame image

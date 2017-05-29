@@ -137,7 +137,7 @@ class Panorama {
     }
   }
 
-  getSource(frame: number): string {
+  getSource(frame: number = 0): string {
     if (typeof this.getSourceCallback === 'function') {
       return this.getSourceCallback(this, frame);
     }

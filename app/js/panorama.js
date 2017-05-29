@@ -75,7 +75,7 @@ class Panorama {
             this.preloadImages();
         }
     }
-    getSource(frame) {
+    getSource(frame = 0) {
         if (typeof this.getSourceCallback === 'function') {
             return this.getSourceCallback(this, frame);
         }
