@@ -9,12 +9,13 @@ window.onload = function () {
     btnRight: '[data-panorama-right]',
     numberOfFrames: 13,
     startFrame: 10,
+    sourceMask: 'images/frame-${index}-${color}.png',
     preload: false,
     parameters: {
       color: colorSelect.value // set color according to current select value
     },
     getSourceCallback: function (ui, frame) {
-      let source = ui.sourceMask.replace('${number}', frame.toString());
+      let source = ui.sourceMask.replace('${index}', frame.toString());
 
       for (const key in ui.parameters) {
         if (ui.parameters.hasOwnProperty(key)) {

@@ -16,7 +16,7 @@ class Panorama {
             btnRight: body.querySelector(opt.btnRight)
         };
         this.numberOfFrames = opt.numberOfFrames;
-        this.sourceMask = this.elems.panorama.getAttribute('data-panorama');
+        this.sourceMask = opt.sourceMask || this.elems.panorama.getAttribute('data-panorama');
         if (!this.elems.panorama || !this.elems.panoramaView || !this.numberOfFrames || !this.sourceMask) {
             console.error('Panorama plugin: Enter all required parameters!');
             return;
@@ -79,7 +79,7 @@ class Panorama {
         if (typeof this.getSourceCallback === 'function') {
             return this.getSourceCallback(this, frame);
         }
-        let source = this.sourceMask.replace('${number}', frame.toString());
+        let source = this.sourceMask.replace('${index}', frame.toString());
         for (const key in this.parameters) {
             if (this.parameters.hasOwnProperty(key)) {
                 source = source.replace('${' + key + '}', this.parameters[key].toString());

@@ -29,6 +29,7 @@ interface IOptions {
   numberOfFrames: number;
   startFrame?: number;
   preload?: boolean;
+  sourceMask?: string;
   parameters?: IParameters;
   getSourceCallback?: Function;
   onBeforeChange?: Function;
@@ -59,7 +60,7 @@ class Panorama {
     };
 
     this.numberOfFrames = opt.numberOfFrames;
-    this.sourceMask = this.elems.panorama.getAttribute('data-panorama');
+    this.sourceMask = opt.sourceMask || this.elems.panorama.getAttribute('data-panorama');
 
     if (!this.elems.panorama || !this.elems.panoramaView || !this.numberOfFrames || !this.sourceMask) {
       console.error('Panorama plugin: Enter all required parameters!');
@@ -142,7 +143,7 @@ class Panorama {
       return this.getSourceCallback(this, frame);
     }
 
-    let source: string = this.sourceMask.replace('${number}', frame.toString());
+    let source: string = this.sourceMask.replace('${index}', frame.toString());
 
     for (const key in this.parameters) {
       if (this.parameters.hasOwnProperty(key)) {
