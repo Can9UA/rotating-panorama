@@ -5,15 +5,15 @@ window.onload = function () {
   const panorama = new Panorama({
     panorama: '[data-panorama]',
     panoramaView: '[data-panorama-view]',
-    btnLeft: '[data-panorama-left]',
-    btnRight: '[data-panorama-right]',
+    btnPrev: '[data-panorama-left]',
+    btnNext: '[data-panorama-right]',
     numberOfFrames: 13,
     preload: true,
     autoplay: {
       enable: true,
       direction: 'next',
-      speed: 300,
-      stopOnHover: true
+      speed: 100,
+      stopOnHover: false
     },
     parameters: {
       color: colorSelect.value

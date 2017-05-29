@@ -1,7 +1,9 @@
+'use strict';
+
 const isTouchDevice: boolean = /MSIE 10.*Touch/.test(navigator.userAgent) ||
   ('ontouchstart' in window) || (window as IWindow).DocumentTouch && document instanceof DocumentTouch;
 
-let events = {
+const events = {
   press: (isTouchDevice) ? 'touchstart' : 'click' as string,
   move: (isTouchDevice) ? 'touchmove' : 'mousemove' as string
 };
@@ -12,8 +14,8 @@ let preloadedImages: Element[] = [];
 interface IElems {
   panorama: Element;
   panoramaView: Element;
-  btnLeft?: Element;
-  btnRight?: Element;
+  btnNext?: Element;
+  btnPrev?: Element;
   image?: Element;
 }
 
@@ -36,8 +38,8 @@ interface IAutoplay {
 interface IOptions {
   panorama: string;
   panoramaView: string;
-  btnLeft: string;
-  btnRight: string;
+  btnNext: string;
+  btnPrev: string;
   numberOfFrames: number;
   startFrame?: number;
   preload?: boolean;
@@ -90,16 +92,12 @@ class Panorama {
     this.onBeforeChange = opt.onBeforeChange;
     this.onAfterChange = opt.onAfterChange;
 
+    // autoplay
+    this.autoplay = this.initAutoplay(opt.autoplay);
+    if (this.autoplay.enable) { this.autoplay.startRotation(); }
+
     this.addElements(this.elems);
     this.addEventListeners(this.elems);
-
-    if (opt.autoplay) {
-      this.autoplay = this.initAutoplay(opt.autoplay);
-
-      if (this.autoplay.enable) {
-        this.autoplay.startRotation();
-      }
-    }
   }
 
   prevFrame() {
@@ -186,25 +184,25 @@ class Panorama {
       elems.panoramaView.removeEventListener(events.move, this.eventsListeners['panoramaView move']);
     }
 
-    if (elems.btnLeft) {
-      elems.btnLeft.removeEventListener(events.press, this.eventsListeners['btnLeft press']);
+    if (elems.btnNext) {
+      elems.btnNext.removeEventListener(events.press, this.eventsListeners['btnNext press']);
 
       if (!isTouchDevice) {
-        elems.btnLeft.removeEventListener('mousedown', this.eventsListeners['btnLeft mousedown']);
+        elems.btnNext.removeEventListener('mousedown', this.eventsListeners['btnNext mousedown']);
 
-        elems.btnLeft.removeEventListener('mouseup', this.eventsListeners['btnLeft mouseup']);
-        elems.btnLeft.removeEventListener('mouseleave', this.eventsListeners['btnLeft mouseup']);
+        elems.btnNext.removeEventListener('mouseup', this.eventsListeners['btnNext mouseup']);
+        elems.btnNext.removeEventListener('mouseleave', this.eventsListeners['btnNext mouseup']);
       }
     }
 
-    if (elems.btnRight) {
-      elems.btnRight.removeEventListener(events.press, this.eventsListeners['btnRight press']);
+    if (elems.btnPrev) {
+      elems.btnPrev.removeEventListener(events.press, this.eventsListeners['btnPrev press']);
 
       if (!isTouchDevice) {
-        elems.btnRight.removeEventListener('mousedown', this.eventsListeners['btnRight mousedown']);
+        elems.btnPrev.removeEventListener('mousedown', this.eventsListeners['btnPrev mousedown']);
 
-        elems.btnRight.removeEventListener('mouseup', this.eventsListeners['btnRight mouseup']);
-        elems.btnRight.removeEventListener('mouseleave', this.eventsListeners['btnRight mouseup']);
+        elems.btnPrev.removeEventListener('mouseup', this.eventsListeners['btnPrev mouseup']);
+        elems.btnPrev.removeEventListener('mouseleave', this.eventsListeners['btnPrev mouseup']);
       }
     }
 
@@ -217,8 +215,8 @@ class Panorama {
     const elems: IElems = {
       panorama: null,
       panoramaView: null,
-      btnLeft: null,
-      btnRight: null,
+      btnNext: null,
+      btnPrev: null,
       image: null
     };
 
@@ -258,9 +256,7 @@ class Panorama {
         this.eventsListeners['panoramaView mousedown'] = function (e: MouseEvent) {
           e.preventDefault();
 
-          if (panorama.autoplay && panorama.autoplay.enable) {
-            panorama.autoplay.stopRotation();
-          }
+          panorama.autoplay.stopRotation();
 
           panorama.move = true;
           oldLeftPos = e.clientX;
@@ -270,10 +266,7 @@ class Panorama {
         this.eventsListeners['panoramaView mouseup'] = function (e: MouseEvent) {
           e.preventDefault();
 
-          const autoplay = panorama.autoplay;
-          if (autoplay && !autoplay.enable) {
-            autoplay.startRotation();
-          }
+          setTimeout(() => panorama.autoplay.startRotation(), 600);
 
           panorama.move = false;
         };
@@ -284,9 +277,8 @@ class Panorama {
       this.eventsListeners['panoramaView move'] = function (e: MouseEvent | TouchEvent) {
         e.preventDefault();
 
-        const autoplay = panorama.autoplay;
-        if (autoplay && autoplay.enable && autoplay.stopOnHover) {
-          autoplay.stopRotation();
+        if (panorama.autoplay.stopOnHover || e instanceof TouchEvent) {
+          panorama.autoplay.stopRotation();
         }
 
         let curLeft: number = 0;
@@ -311,76 +303,49 @@ class Panorama {
       elems.panoramaView.addEventListener(events.move, this.eventsListeners['panoramaView move']);
     }
 
-    if (elems.btnLeft) {
+    if (elems.btnNext) {
       let intervalPrev: any;
 
-      this.eventsListeners['btnLeft press'] = function (e: MouseEvent | TouchEvent) {
+      this.eventsListeners['btnNext press'] = function (e: MouseEvent | TouchEvent) {
         e.preventDefault();
-
-        // const autoplay = panorama.autoplay;
-        // if (autoplay && autoplay.enable) {
-        //   autoplay.stopRotation();
-        // }
-
         panorama.nextFrame();
-
-        // if (autoplay) { autoplay.startRotation(); }
       };
-      elems.btnLeft.addEventListener(events.press, this.eventsListeners['btnLeft press']);
+      elems.btnNext.addEventListener(events.press, this.eventsListeners['btnNext press']);
 
       if (!isTouchDevice) {
-        this.eventsListeners['btnLeft mousedown'] = function (e: MouseEvent) {
+        this.eventsListeners['btnNext mousedown'] = function (e: MouseEvent) {
           e.preventDefault();
-
-          // const autoplay = panorama.autoplay;
-          // if (autoplay && autoplay.enable) {
-          //   autoplay.stopRotation();
-          // }
-
-          intervalPrev = setInterval(() => {
-            panorama.nextFrame();
-
-            // if (autoplay) { autoplay.startRotation(); }
-          }, 130);
+          intervalPrev = setInterval(() => panorama.nextFrame(), 130);
         };
-        elems.btnLeft.addEventListener('mousedown', this.eventsListeners['btnLeft mousedown']);
+        elems.btnNext.addEventListener('mousedown', this.eventsListeners['btnNext mousedown']);
 
-        this.eventsListeners['btnLeft mouseup'] = () => clearInterval(intervalPrev);
-        elems.btnLeft.addEventListener('mouseup', this.eventsListeners['btnLeft mouseup']);
-        elems.btnLeft.addEventListener('mouseleave', this.eventsListeners['btnLeft mouseup']);
+        this.eventsListeners['btnNext mouseup'] = () => clearInterval(intervalPrev);
+        elems.btnNext.addEventListener('mouseup', this.eventsListeners['btnNext mouseup']);
+        elems.btnNext.addEventListener('mouseleave', this.eventsListeners['btnNext mouseup']);
       }
     }
 
-    if (elems.btnRight) {
+    if (elems.btnPrev) {
       let intervalNext: any;
 
-      this.eventsListeners['btnRight press'] = function (e: MouseEvent | TouchEvent) {
+      this.eventsListeners['btnPrev press'] = function (e: MouseEvent | TouchEvent) {
         e.preventDefault();
 
         panorama.prevFrame();
       };
-      elems.btnRight.addEventListener(events.press, this.eventsListeners['btnRight press']);
+      elems.btnPrev.addEventListener(events.press, this.eventsListeners['btnPrev press']);
 
       if (!isTouchDevice) {
-        this.eventsListeners['btnRight mousedown'] = function (e: MouseEvent) {
+        this.eventsListeners['btnPrev mousedown'] = function (e: MouseEvent) {
           e.preventDefault();
 
-          // const autoplay = panorama.autoplay;
-          // if (autoplay && autoplay.enable) {
-          //   autoplay.stopRotation();
-          // }
-
-          intervalNext = setInterval(() => {
-            panorama.prevFrame();
-
-            // if (autoplay) { autoplay.startRotation(); }
-          }, 130);
+          intervalNext = setInterval(() => panorama.prevFrame(), 130);
         };
-        elems.btnRight.addEventListener('mousedown', this.eventsListeners['btnRight mousedown']);
+        elems.btnPrev.addEventListener('mousedown', this.eventsListeners['btnPrev mousedown']);
 
-        this.eventsListeners['btnRight mouseup'] = () => clearInterval(intervalNext);
-        elems.btnRight.addEventListener('mouseup', this.eventsListeners['btnRight mouseup']);
-        elems.btnRight.addEventListener('mouseleave', this.eventsListeners['btnRight mouseup']);
+        this.eventsListeners['btnPrev mouseup'] = () => clearInterval(intervalNext);
+        elems.btnPrev.addEventListener('mouseup', this.eventsListeners['btnPrev mouseup']);
+        elems.btnPrev.addEventListener('mouseleave', this.eventsListeners['btnPrev mouseup']);
       }
     }
   }
@@ -417,6 +382,14 @@ class Panorama {
   }
 
   private initAutoplay(options: IAutoplay) {
+    if (!options) {
+      return {
+        enable: false,
+        startRotation() { return; },
+        stopRotation() { return; },
+      };
+    }
+
     const panorama = this;
     const Autoplay: IAutoplay = {
       enable: options.enable,
@@ -425,6 +398,7 @@ class Panorama {
       stopOnHover: options.stopOnHover,
 
       startRotation() {
+        clearInterval(this.interval);
         this.interval = setInterval(() => {
           (this.direction === 'prev') ? panorama.prevFrame() : panorama.nextFrame();
         }, this.speed);
