@@ -18,7 +18,8 @@
     "max-classes-per-file": false,
     "no-string-literal": false,
     "object-literal-key-quotes": false,
-    "object-literal-shorthand": false
+    "object-literal-shorthand": false,
+    "member-access": false
   },
   
   "jsRules": {

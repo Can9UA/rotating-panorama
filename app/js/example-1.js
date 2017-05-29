@@ -3,13 +3,13 @@ window.onload = function () {
 
   // init Panorama plugin start
   const panorama = new Panorama({
-    panorama:       '[data-panorama]',
-    panoramaView:   '[data-panorama-view]',
-    btnLeft:        '[data-panorama-left]',
-    btnRight:       '[data-panorama-right]',
+    panorama: '[data-panorama]',
+    panoramaView: '[data-panorama-view]',
+    btnLeft: '[data-panorama-left]',
+    btnRight: '[data-panorama-right]',
     numberOfFrames: 13,
-    preload:        true,
-    parameters:     {
+    preload: true,
+    parameters: {
       color: colorSelect.value // set color according to current select value
     }
   });
@@ -23,7 +23,7 @@ window.onload = function () {
    * 3) onBeforeChange: function (ui: panorama - all plugin options, frame: number - next frame index) - before frame changed
    * 4) onAfterChange: function (ui: panorama - all plugin options, frame: number - next frame index) - after frame changed
    * 5) destroy() - remove all event Listeners and cached images
-  ***/
+   ***/
   // init Panorama plugin end
 
   // change item color using select start

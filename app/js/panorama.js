@@ -79,10 +79,10 @@ class Panorama {
         if (typeof this.getSourceCallback === 'function') {
             return this.getSourceCallback(this, frame);
         }
-        let source = this.sourceMask.replace('(number)', frame.toString());
+        let source = this.sourceMask.replace('${number}', frame.toString());
         for (const key in this.parameters) {
             if (this.parameters.hasOwnProperty(key)) {
-                source = source.replace(`(${key})`, this.parameters[key].toString());
+                source = source.replace('${' + key + '}', this.parameters[key].toString());
             }
         }
         return source;

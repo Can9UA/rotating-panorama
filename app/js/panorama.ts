@@ -3,7 +3,7 @@ const isTouchDevice: boolean = /MSIE 10.*Touch/.test(navigator.userAgent) ||
 
 let events = {
   press: (isTouchDevice) ? 'touchstart' : 'click' as string,
-  move:  (isTouchDevice) ? 'touchmove' : 'mousemove' as string
+  move: (isTouchDevice) ? 'touchmove' : 'mousemove' as string
 };
 
 const body: HTMLBodyElement = document.querySelector('body');
@@ -21,39 +21,41 @@ interface IParameters {
   [propName: string]: string;
 }
 
-class Panorama {
-  public elems: IElems;
-  public numberOfFrames: number;
-  public sourceMask: string;
-  public curFrame: number;
-  public move: boolean;
-  public parameters: IParameters;
+interface IOptions {
+  panorama: string;
+  panoramaView: string;
+  btnLeft: string;
+  btnRight: string;
+  numberOfFrames: number;
+  startFrame?: number;
+  preload?: boolean;
+  parameters?: IParameters;
+  getSourceCallback?: Function;
+  onBeforeChange?: Function;
+  onAfterChange?: Function;
+}
 
-  public getSourceCallback?: Function;
-  public onBeforeChange?: Function;
-  public onAfterChange?: Function;
+class Panorama {
+  elems: IElems;
+  numberOfFrames: number;
+  sourceMask: string;
+  curFrame: number;
+  move: boolean;
+  parameters: IParameters;
+
+  getSourceCallback?: Function;
+  onBeforeChange?: Function;
+  onAfterChange?: Function;
 
   private preload: boolean;
   private eventsListeners: Function[] = [];
 
-  constructor(opt: {
-    panorama: string,
-    panoramaView: string,
-    btnLeft: string,
-    btnRight: string,
-    numberOfFrames: number,
-    startFrame?: number,
-    preload?: boolean,
-    parameters?: IParameters,
-    getSourceCallback?: Function,
-    onBeforeChange?: Function,
-    onAfterChange?: Function
-  }) {
+  constructor(opt: IOptions) {
     this.elems = {
-      panorama:     body.querySelector(opt.panorama),
+      panorama: body.querySelector(opt.panorama),
       panoramaView: body.querySelector(opt.panoramaView),
-      btnLeft:      body.querySelector(opt.btnLeft),
-      btnRight:     body.querySelector(opt.btnRight)
+      btnLeft: body.querySelector(opt.btnLeft),
+      btnRight: body.querySelector(opt.btnRight)
     };
 
     this.numberOfFrames = opt.numberOfFrames;
@@ -82,7 +84,7 @@ class Panorama {
     this.addEventListeners(this.elems);
   }
 
-  public prevFrame() {
+  prevFrame() {
     let frame = this.curFrame - 1;
 
     if (frame < 1) {
@@ -92,7 +94,7 @@ class Panorama {
     this.goToFrame(frame);
   }
 
-  public nextFrame() {
+  nextFrame() {
     let frame = this.curFrame + 1;
 
     if (frame > this.numberOfFrames) {
@@ -102,7 +104,7 @@ class Panorama {
     this.goToFrame(frame);
   }
 
-  public goToFrame(frame: number) {
+  goToFrame(frame: number) {
     if (typeof this.onBeforeChange === 'function') {
       this.onBeforeChange(this, frame);
     }
@@ -121,7 +123,7 @@ class Panorama {
     }
   }
 
-  public updateParameters(parameters: IParameters) {
+  updateParameters(parameters: IParameters) {
     for (const key in parameters) {
       if (parameters.hasOwnProperty(key)) {
         this.parameters[key] = parameters[key].toString();
@@ -135,23 +137,23 @@ class Panorama {
     }
   }
 
-  public getSource(frame: number): string {
+  getSource(frame: number): string {
     if (typeof this.getSourceCallback === 'function') {
       return this.getSourceCallback(this, frame);
     }
 
-    let source: string = this.sourceMask.replace('(number)', frame.toString());
+    let source: string = this.sourceMask.replace('${number}', frame.toString());
 
     for (const key in this.parameters) {
       if (this.parameters.hasOwnProperty(key)) {
-        source = source.replace(`(${key})`, this.parameters[key].toString());
+        source = source.replace('${' + key + '}', this.parameters[key].toString());
       }
     }
 
     return source;
   }
 
-  public destroy() {
+  destroy() {
     const elems = this.elems;
     elems.image = null;
     preloadedImages = [];
