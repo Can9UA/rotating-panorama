@@ -26,6 +26,7 @@ interface IAutoplay {
   speed?: number;
   interval?: any;
   direction?: 'next' | 'prev';
+  stopOnHover?: boolean;
   startRotation?: Function;
   stopRotation?: Function;
   reload?: Function;
@@ -248,7 +249,7 @@ class Panorama {
   }
 
   private addEventListeners(elems: IElems) {
-    const that = this;
+    const panorama = this;
 
     if (elems.panoramaView) {
       let oldLeftPos: number = 0;
@@ -257,7 +258,11 @@ class Panorama {
         this.eventsListeners['panoramaView mousedown'] = function (e: MouseEvent) {
           e.preventDefault();
 
-          that.move = true;
+          if (panorama.autoplay && panorama.autoplay.enable) {
+            panorama.autoplay.stopRotation();
+          }
+
+          panorama.move = true;
           oldLeftPos = e.clientX;
         };
         elems.panoramaView.addEventListener('mousedown', this.eventsListeners['panoramaView mousedown']);
@@ -265,7 +270,12 @@ class Panorama {
         this.eventsListeners['panoramaView mouseup'] = function (e: MouseEvent) {
           e.preventDefault();
 
-          that.move = false;
+          const autoplay = panorama.autoplay;
+          if (autoplay && !autoplay.enable) {
+            autoplay.startRotation();
+          }
+
+          panorama.move = false;
         };
         elems.panoramaView.addEventListener('mouseup', this.eventsListeners['panoramaView mouseup']);
         elems.panoramaView.addEventListener('mouseleave', this.eventsListeners['panoramaView mouseup']);
@@ -273,10 +283,16 @@ class Panorama {
 
       this.eventsListeners['panoramaView move'] = function (e: MouseEvent | TouchEvent) {
         e.preventDefault();
+
+        const autoplay = panorama.autoplay;
+        if (autoplay && autoplay.enable && autoplay.stopOnHover) {
+          autoplay.stopRotation();
+        }
+
         let curLeft: number = 0;
 
         if (e instanceof MouseEvent) {
-          if (!that.move) {
+          if (!panorama.move) {
             return;
           }
           curLeft = e.clientX;
@@ -287,7 +303,7 @@ class Panorama {
         const diff: number = Math.abs(oldLeftPos - curLeft);
 
         if (diff > 5) {
-          (oldLeftPos < curLeft) ? that.prevFrame() : that.nextFrame();
+          (oldLeftPos < curLeft) ? panorama.prevFrame() : panorama.nextFrame();
 
           oldLeftPos = curLeft;
         }
@@ -301,7 +317,14 @@ class Panorama {
       this.eventsListeners['btnLeft press'] = function (e: MouseEvent | TouchEvent) {
         e.preventDefault();
 
-        that.nextFrame();
+        // const autoplay = panorama.autoplay;
+        // if (autoplay && autoplay.enable) {
+        //   autoplay.stopRotation();
+        // }
+
+        panorama.nextFrame();
+
+        // if (autoplay) { autoplay.startRotation(); }
       };
       elems.btnLeft.addEventListener(events.press, this.eventsListeners['btnLeft press']);
 
@@ -309,7 +332,16 @@ class Panorama {
         this.eventsListeners['btnLeft mousedown'] = function (e: MouseEvent) {
           e.preventDefault();
 
-          intervalPrev = setInterval(() => that.nextFrame(), 130);
+          // const autoplay = panorama.autoplay;
+          // if (autoplay && autoplay.enable) {
+          //   autoplay.stopRotation();
+          // }
+
+          intervalPrev = setInterval(() => {
+            panorama.nextFrame();
+
+            // if (autoplay) { autoplay.startRotation(); }
+          }, 130);
         };
         elems.btnLeft.addEventListener('mousedown', this.eventsListeners['btnLeft mousedown']);
 
@@ -325,7 +357,7 @@ class Panorama {
       this.eventsListeners['btnRight press'] = function (e: MouseEvent | TouchEvent) {
         e.preventDefault();
 
-        that.prevFrame();
+        panorama.prevFrame();
       };
       elems.btnRight.addEventListener(events.press, this.eventsListeners['btnRight press']);
 
@@ -333,7 +365,16 @@ class Panorama {
         this.eventsListeners['btnRight mousedown'] = function (e: MouseEvent) {
           e.preventDefault();
 
-          intervalNext = setInterval(() => that.prevFrame(), 130);
+          // const autoplay = panorama.autoplay;
+          // if (autoplay && autoplay.enable) {
+          //   autoplay.stopRotation();
+          // }
+
+          intervalNext = setInterval(() => {
+            panorama.prevFrame();
+
+            // if (autoplay) { autoplay.startRotation(); }
+          }, 130);
         };
         elems.btnRight.addEventListener('mousedown', this.eventsListeners['btnRight mousedown']);
 
@@ -345,7 +386,7 @@ class Panorama {
   }
 
   private preloadImages(frame: number = 1) {
-    const that = this;
+    const panorama = this;
 
     if (frame === 1) {
       preloadedImages = [];
@@ -355,7 +396,7 @@ class Panorama {
       const image = this.cacheImg(frame);
 
       image.addEventListener('load', function () {
-        that.preloadImages(frame + 1);
+        panorama.preloadImages(frame + 1);
       });
     }
   }
@@ -381,6 +422,7 @@ class Panorama {
       enable: options.enable,
       speed: options.speed || 200,
       direction: options.direction || 'next',
+      stopOnHover: options.stopOnHover,
 
       startRotation() {
         this.interval = setInterval(() => {

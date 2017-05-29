@@ -12,7 +12,8 @@ window.onload = function () {
     autoplay: {
       enable: true,
       direction: 'next',
-      speed: 110
+      speed: 300,
+      stopOnHover: true
     },
     parameters: {
       color: colorSelect.value
