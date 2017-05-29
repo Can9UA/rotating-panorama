@@ -9,12 +9,7 @@ let preloadedImages = [];
 class Panorama {
     constructor(opt) {
         this.eventsListeners = [];
-        this.elems = {
-            panorama: body.querySelector(opt.panorama),
-            panoramaView: body.querySelector(opt.panoramaView),
-            btnLeft: body.querySelector(opt.btnLeft),
-            btnRight: body.querySelector(opt.btnRight)
-        };
+        this.elems = this.getElems(opt);
         this.numberOfFrames = opt.numberOfFrames;
         this.sourceMask = opt.sourceMask || this.elems.panorama.getAttribute('data-panorama');
         if (!this.elems.panorama || !this.elems.panoramaView || !this.numberOfFrames || !this.sourceMask) {
@@ -115,6 +110,27 @@ class Panorama {
                 elems.btnRight.removeEventListener('mouseleave', this.eventsListeners['btnRight mouseup']);
             }
         }
+    }
+    getElems(opt) {
+        const elems = {
+            panorama: null,
+            panoramaView: null,
+            btnLeft: null,
+            btnRight: null,
+            image: null
+        };
+        for (const elemName in elems) {
+            if (!opt[elemName]) {
+                continue;
+            }
+            if (typeof opt[elemName] === 'string') {
+                elems[elemName] = body.querySelector(opt[elemName]);
+            }
+            else {
+                elems[elemName] = opt[elemName];
+            }
+        }
+        return elems;
     }
     addElements(elems) {
         // add image

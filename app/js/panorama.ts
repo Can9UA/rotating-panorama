@@ -52,12 +52,7 @@ class Panorama {
   private eventsListeners: Function[] = [];
 
   constructor(opt: IOptions) {
-    this.elems = {
-      panorama: body.querySelector(opt.panorama),
-      panoramaView: body.querySelector(opt.panoramaView),
-      btnLeft: body.querySelector(opt.btnLeft),
-      btnRight: body.querySelector(opt.btnRight)
-    };
+    this.elems = this.getElems(opt);
 
     this.numberOfFrames = opt.numberOfFrames;
     this.sourceMask = opt.sourceMask || this.elems.panorama.getAttribute('data-panorama');
@@ -190,6 +185,28 @@ class Panorama {
         elems.btnRight.removeEventListener('mouseleave', this.eventsListeners['btnRight mouseup']);
       }
     }
+  }
+
+  private getElems(opt: IOptions): IElems {
+    const elems: IElems = {
+      panorama: null,
+      panoramaView: null,
+      btnLeft: null,
+      btnRight: null,
+      image: null
+    };
+
+    for (const elemName in elems) {
+      if (!opt[elemName]) { continue; }
+
+      if (typeof opt[elemName] === 'string') {
+        elems[elemName] = body.querySelector(opt[elemName]);
+      } else {
+        elems[elemName] = opt[elemName];
+      }
+    }
+
+    return elems;
   }
 
   private addElements(elems: IElems) {
