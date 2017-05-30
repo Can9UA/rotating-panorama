@@ -71,6 +71,7 @@ interface IOptions {
   getSourceCallback?: Function;
   onBeforeChange?: Function;
   onAfterChange?: Function;
+  onLoad?: Function;
 }
 
 class Panorama {
@@ -83,6 +84,8 @@ class Panorama {
   parameters: IParameters;
   autoplay: IAutoplay;
   interval?: any;
+  loadedImages?: number;
+  onLoad?: Function;
 
   getSourceCallback?: Function;
   onBeforeChange?: Function;
@@ -114,6 +117,7 @@ class Panorama {
     }
 
     this.preload = opt.preload;
+    this.onLoad = opt.onLoad;
     this.parameters = opt.parameters;
     this.parameters.update = function (parameters: IParameters) {
       for (const key in parameters) {
@@ -274,6 +278,7 @@ class Panorama {
     elems.panorama.appendChild(elems.image);
 
     if (this.preload) {
+      this.loadedImages = 0;
       this.preloadImages();
     }
   }
@@ -428,7 +433,14 @@ class Panorama {
       const image = this.cacheImg(frame);
 
       image.addEventListener('load', function () {
+        panorama.loadedImages++;
         panorama.preloadImages(frame + 1);
+
+        if (panorama.loadedImages === panorama.numberOfFrames) {
+          if (typeof panorama.onLoad === 'function') {
+            panorama.onLoad(panorama);
+          }
+        }
       });
     }
   }

@@ -47,6 +47,7 @@ class Panorama {
             this.curFrame = opt.startFrame;
         }
         this.preload = opt.preload;
+        this.onLoad = opt.onLoad;
         this.parameters = opt.parameters;
         this.parameters.update = function (parameters) {
             for (const key in parameters) {
@@ -173,6 +174,7 @@ class Panorama {
         elems.image.setAttribute('src', this.getSource(this.curFrame));
         elems.panorama.appendChild(elems.image);
         if (this.preload) {
+            this.loadedImages = 0;
             this.preloadImages();
         }
     }
@@ -292,7 +294,13 @@ class Panorama {
         if (frame <= this.numberOfFrames) {
             const image = this.cacheImg(frame);
             image.addEventListener('load', function () {
+                panorama.loadedImages++;
                 panorama.preloadImages(frame + 1);
+                if (panorama.loadedImages === panorama.numberOfFrames) {
+                    if (typeof panorama.onLoad === 'function') {
+                        panorama.onLoad(panorama);
+                    }
+                }
             });
         }
     }

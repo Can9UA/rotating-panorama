@@ -10,6 +10,9 @@ window.onload = function () {
     preload: true,
     parameters: {
       color: colorSelect.value // set color according to current select value
+    },
+    onLoad: function (ui) {
+      panorama.elems.panorama.classList.add('loaded');
     }
   });
 
@@ -22,6 +25,7 @@ window.onload = function () {
    * 3) onBeforeChange: function (ui: panorama - all plugin options, frame: number - next frame index) - before frame changed
    * 4) onAfterChange: function (ui: panorama - all plugin options, frame: number - next frame index) - after frame changed
    * 5) destroy() - remove all event Listeners and cached images
+   * 6) onLoad() - after all images loaded
    ***/
   // init Panorama plugin end
 
