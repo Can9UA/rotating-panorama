@@ -9,6 +9,7 @@ window.onload = function () {
     panorama: '[data-panorama]',
     numberOfFrames: 26,
     preload: true,
+    scrollOnMove: false,
     parameters: {
       color: colorSelect.value // set color according to current select value
     },
@@ -18,7 +19,6 @@ window.onload = function () {
       }
     }
   });
-
   // init Panorama plugin end
 
   // change on range changes start

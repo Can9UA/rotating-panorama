@@ -19,6 +19,7 @@ class Panorama {
             return;
         }
         this.move = false;
+        this.scrollOnMove = (typeof opt.scrollOnMove === 'undefined') ? true : opt.scrollOnMove;
         this.curFrame = 1;
         if (opt.startFrame <= this.numberOfFrames && opt.startFrame >= 1) {
             this.curFrame = opt.startFrame;
@@ -206,7 +207,9 @@ class Panorama {
                     oldLeftPos = curLeft;
                 }
             };
-            elems.panorama.addEventListener(events.move, this.eventsListeners['panorama move']);
+            if (panorama.scrollOnMove) {
+                elems.panorama.addEventListener(events.move, this.eventsListeners['panorama move']);
+            }
         }
         if (elems.btnNext) {
             this.eventsListeners['btnNext press'] = function (e) {
@@ -264,7 +267,7 @@ class Panorama {
         if (frame === 1) {
             preloadedImages = [];
         }
-        if (frame < this.numberOfFrames) {
+        if (frame <= this.numberOfFrames) {
             const image = this.cacheImg(frame);
             image.addEventListener('load', function () {
                 panorama.preloadImages(frame + 1);
