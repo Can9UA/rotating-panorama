@@ -10,6 +10,7 @@ let preloadedImages = [];
 class Panorama {
     constructor(opt) {
         this.eventsListeners = [];
+        const panorama = this;
         this.elems = this.getElems(opt);
         this.numberOfFrames = opt.numberOfFrames;
         this.sourceMask = opt.sourceMask || this.elems.panorama.getAttribute('data-panorama');
@@ -22,20 +23,20 @@ class Panorama {
         if (opt.startFrame <= this.numberOfFrames && opt.startFrame >= 1) {
             this.curFrame = opt.startFrame;
         }
+        this.preload = opt.preload;
         this.parameters = opt.parameters;
         this.parameters.update = function (parameters) {
             for (const key in parameters) {
                 if (parameters.hasOwnProperty(key)) {
-                    this.parameters[key] = parameters[key].toString();
+                    panorama.parameters[key] = parameters[key].toString();
                 }
             }
             preloadedImages = []; // remove old cached values
-            this.goToFrame(this.curFrame);
-            if (this.preload) {
-                this.preloadImages();
+            panorama.goToFrame(panorama.curFrame);
+            if (panorama.preload) {
+                panorama.preloadImages();
             }
         };
-        this.preload = opt.preload;
         this.getSourceCallback = opt.getSourceCallback;
         this.onBeforeChange = opt.onBeforeChange;
         this.onAfterChange = opt.onAfterChange;
