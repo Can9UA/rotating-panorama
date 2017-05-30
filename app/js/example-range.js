@@ -7,7 +7,7 @@ window.onload = function () {
   // init Panorama plugin start
   const panorama = new Panorama({
     panorama: '[data-panorama]',
-    numberOfFrames: 13,
+    numberOfFrames: 26,
     preload: true,
     parameters: {
       color: colorSelect.value // set color according to current select value
@@ -27,7 +27,7 @@ window.onload = function () {
     step: 1,
     range: {
       'min': [1],
-      'max': [13] // numberOfFrames
+      'max': [26] // numberOfFrames
     }
   });
 
