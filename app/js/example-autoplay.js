@@ -4,7 +4,6 @@ window.onload = function () {
   // init Panorama plugin start
   const panorama = new Panorama({
     panorama: '[data-panorama]',
-    panoramaView: '[data-panorama-view]',
     btnPrev: '[data-panorama-left]',
     btnNext: '[data-panorama-right]',
     numberOfFrames: 13,
@@ -65,7 +64,5 @@ window.onload = function () {
     });
     panorama.autoplay.startRotation(); // start rotate even if rotating is stopped now
   })
-
-  window.panorama = panorama;
 };
 

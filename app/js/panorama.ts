@@ -13,7 +13,6 @@ let preloadedImages: Element[] = [];
 
 interface IElems {
   panorama: Element;
-  panoramaView: Element;
   btnNext?: Element;
   btnPrev?: Element;
   image?: Element;
@@ -38,7 +37,6 @@ interface IAutoplay {
 
 interface IOptions {
   panorama: string;
-  panoramaView: string;
   btnNext: string;
   btnPrev: string;
   numberOfFrames: number;
@@ -75,7 +73,7 @@ class Panorama {
     this.numberOfFrames = opt.numberOfFrames;
     this.sourceMask = opt.sourceMask || this.elems.panorama.getAttribute('data-panorama');
 
-    if (!this.elems.panorama || !this.elems.panoramaView || !this.numberOfFrames || !this.sourceMask) {
+    if (!this.elems.panorama || !this.numberOfFrames || !this.sourceMask) {
       console.error('Panorama plugin: Enter all required parameters!');
       return;
     }
@@ -176,14 +174,14 @@ class Panorama {
     elems.image = null;
     preloadedImages = [];
 
-    if (elems.panoramaView) {
+    if (elems.panorama) {
       if (!isTouchDevice) {
-        elems.panoramaView.removeEventListener('mousedown', this.eventsListeners['panoramaView mousedown']);
-        elems.panoramaView.removeEventListener('mouseup', this.eventsListeners['panoramaView mouseup']);
-        elems.panoramaView.removeEventListener('mouseleave', this.eventsListeners['panoramaView mouseup']);
+        elems.panorama.removeEventListener('mousedown', this.eventsListeners['panorama mousedown']);
+        elems.panorama.removeEventListener('mouseup', this.eventsListeners['panorama mouseup']);
+        elems.panorama.removeEventListener('mouseleave', this.eventsListeners['panorama mouseup']);
       }
 
-      elems.panoramaView.removeEventListener(events.move, this.eventsListeners['panoramaView move']);
+      elems.panorama.removeEventListener(events.move, this.eventsListeners['panorama move']);
     }
 
     if (elems.btnNext) {
@@ -220,7 +218,6 @@ class Panorama {
   private getElems(opt: IOptions): IElems {
     const elems: IElems = {
       panorama: null,
-      panoramaView: null,
       btnNext: null,
       btnPrev: null,
       image: null
@@ -245,7 +242,7 @@ class Panorama {
     // add image
     elems.image = document.createElement('img');
     elems.image.setAttribute('src', this.getSource(this.curFrame));
-    elems.panoramaView.appendChild(elems.image);
+    elems.panorama.appendChild(elems.image);
 
     if (this.preload) {
       this.preloadImages();
@@ -255,11 +252,11 @@ class Panorama {
   private addEventListeners(elems: IElems) {
     const panorama = this;
 
-    if (elems.panoramaView) {
+    if (elems.panorama) {
       let oldLeftPos: number = 0;
 
       if (!isTouchDevice) {
-        this.eventsListeners['panoramaView mousedown'] = function (e: MouseEvent) {
+        this.eventsListeners['panorama mousedown'] = function (e: MouseEvent) {
           e.preventDefault();
 
           panorama.move = true;
@@ -267,9 +264,9 @@ class Panorama {
           oldLeftPos = e.clientX;
           panorama.autoplay.startRotationAfter(1500);
         };
-        elems.panoramaView.addEventListener('mousedown', this.eventsListeners['panoramaView mousedown']);
+        elems.panorama.addEventListener('mousedown', this.eventsListeners['panorama mousedown']);
 
-        this.eventsListeners['panoramaView mouseup'] = function (e: MouseEvent) {
+        this.eventsListeners['panorama mouseup'] = function (e: MouseEvent) {
           e.preventDefault();
 
           panorama.move = false;
@@ -278,11 +275,23 @@ class Panorama {
             panorama.autoplay.startRotationAfter(1000);
           }
         };
-        elems.panoramaView.addEventListener('mouseup', this.eventsListeners['panoramaView mouseup']);
-        elems.panoramaView.addEventListener('mouseleave', this.eventsListeners['panoramaView mouseup']);
+        elems.panorama.addEventListener('mouseup', this.eventsListeners['panorama mouseup']);
+        elems.panorama.addEventListener('mouseleave', this.eventsListeners['panorama mouseup']);
+      } else {
+        elems.panorama.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+
+          panorama.autoplay.stopRotation();
+        });
+
+        elems.panorama.addEventListener('touchend', (e) => {
+          e.preventDefault();
+
+          panorama.autoplay.startRotationAfter(1500);
+        });
       }
 
-      this.eventsListeners['panoramaView move'] = function (e: MouseEvent | TouchEvent) {
+      this.eventsListeners['panorama move'] = function (e: MouseEvent | TouchEvent) {
         e.preventDefault();
 
         if (panorama.autoplay.stopOnHover) {
@@ -308,7 +317,7 @@ class Panorama {
           oldLeftPos = curLeft;
         }
       };
-      elems.panoramaView.addEventListener(events.move, this.eventsListeners['panoramaView move']);
+      elems.panorama.addEventListener(events.move, this.eventsListeners['panorama move']);
     }
 
     if (elems.btnNext) {
