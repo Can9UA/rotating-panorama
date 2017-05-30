@@ -32,7 +32,6 @@ interface IAutoplay {
   stopOnHover?: boolean;
   startRotation?: Function;
   stopRotation?: Function;
-  reload?: Function;
   update?: Function;
   startRotationAfter?: Function;
 }
@@ -440,18 +439,13 @@ class Panorama {
         this.enable = false;
       },
 
-      reload() {
-        this.stopRotation();
-        this.startRotation();
-      },
-
       update(params: IAutoplay) {
         if (!params) { return; }
 
         if (params.direction) {
           this.direction = params.direction;
 
-          if (this.enable) { this.reload(); }
+          if (this.enable) { this.startRotation(); }
         }
       },
 

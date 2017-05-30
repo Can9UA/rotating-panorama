@@ -55,7 +55,7 @@ window.onload = function () {
     panorama.autoplay.update({
       direction: 'next'
     });
-    //panorama.autoplay.reload(); // start rotate even if rotating is stopped now
+    panorama.autoplay.startRotation(); // start rotate even if rotating is stopped now
   });
 
   const autoRotatePrev = document.querySelector('[data-panorama-autoplay-prev]');
@@ -63,7 +63,7 @@ window.onload = function () {
     panorama.autoplay.update({
       direction: 'prev'
     });
-    //panorama.autoplay.reload(); // start rotate even if rotating is stopped now
+    panorama.autoplay.startRotation(); // start rotate even if rotating is stopped now
   })
 
   window.panorama = panorama;

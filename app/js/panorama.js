@@ -298,10 +298,6 @@ class Panorama {
                 clearInterval(this.interval);
                 this.enable = false;
             },
-            reload() {
-                this.stopRotation();
-                this.startRotation();
-            },
             update(params) {
                 if (!params) {
                     return;
@@ -309,7 +305,7 @@ class Panorama {
                 if (params.direction) {
                     this.direction = params.direction;
                     if (this.enable) {
-                        this.reload();
+                        this.startRotation();
                     }
                 }
             },
