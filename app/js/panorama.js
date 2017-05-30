@@ -23,6 +23,18 @@ class Panorama {
             this.curFrame = opt.startFrame;
         }
         this.parameters = opt.parameters;
+        this.parameters.update = function (parameters) {
+            for (const key in parameters) {
+                if (parameters.hasOwnProperty(key)) {
+                    this.parameters[key] = parameters[key].toString();
+                }
+            }
+            preloadedImages = []; // remove old cached values
+            this.goToFrame(this.curFrame);
+            if (this.preload) {
+                this.preloadImages();
+            }
+        };
         this.preload = opt.preload;
         this.getSourceCallback = opt.getSourceCallback;
         this.onBeforeChange = opt.onBeforeChange;
@@ -62,18 +74,6 @@ class Panorama {
         }
         if (typeof this.onAfterChange === 'function') {
             this.onAfterChange(this, frame);
-        }
-    }
-    updateParameters(parameters) {
-        for (const key in parameters) {
-            if (parameters.hasOwnProperty(key)) {
-                this.parameters[key] = parameters[key].toString();
-            }
-        }
-        preloadedImages = []; // remove old cached values
-        this.goToFrame(this.curFrame);
-        if (this.preload) {
-            this.preloadImages();
         }
     }
     getSource(frame = 0) {

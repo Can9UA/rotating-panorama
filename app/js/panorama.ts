@@ -19,6 +19,7 @@ interface IElems {
 }
 
 interface IParameters {
+  update: any;
   [propName: string]: string;
 }
 
@@ -36,9 +37,9 @@ interface IAutoplay {
 }
 
 interface IOptions {
-  panorama: string;
-  btnNext: string;
-  btnPrev: string;
+  panorama: string | HTMLElement;
+  btnNext: string | HTMLElement;
+  btnPrev: string | HTMLElement;
   numberOfFrames: number;
   startFrame?: number;
   preload?: boolean;
@@ -86,6 +87,19 @@ class Panorama {
     }
 
     this.parameters = opt.parameters;
+    this.parameters.update = function (parameters: IParameters) {
+      for (const key in parameters) {
+        if (parameters.hasOwnProperty(key)) {
+          this.parameters[key] = parameters[key].toString();
+        }
+      }
+      preloadedImages = []; // remove old cached values
+      this.goToFrame(this.curFrame);
+
+      if (this.preload) {
+        this.preloadImages();
+      }
+    };
     this.preload = opt.preload;
 
     this.getSourceCallback = opt.getSourceCallback;
@@ -94,7 +108,9 @@ class Panorama {
 
     // autoplay
     this.autoplay = this.initAutoplay(opt.autoplay);
-    if (this.autoplay.enable) { this.autoplay.startRotation(); }
+    if (this.autoplay.enable) {
+      this.autoplay.startRotation();
+    }
 
     this.addElements(this.elems);
     this.addEventListeners(this.elems);
@@ -136,20 +152,6 @@ class Panorama {
 
     if (typeof this.onAfterChange === 'function') {
       this.onAfterChange(this, frame);
-    }
-  }
-
-  updateParameters(parameters: IParameters) {
-    for (const key in parameters) {
-      if (parameters.hasOwnProperty(key)) {
-        this.parameters[key] = parameters[key].toString();
-      }
-    }
-    preloadedImages = []; // remove old cached values
-    this.goToFrame(this.curFrame);
-
-    if (this.preload) {
-      this.preloadImages();
     }
   }
 
@@ -449,12 +451,16 @@ class Panorama {
       },
 
       update(params: IAutoplay) {
-        if (!params) { return; }
+        if (!params) {
+          return;
+        }
 
         if (params.direction) {
           this.direction = params.direction;
 
-          if (this.enable) { this.startRotation(); }
+          if (this.enable) {
+            this.startRotation();
+          }
         }
       },
 
