@@ -1,39 +1,48 @@
 window.onload = function () {
   const colorSelect = document.querySelector('#color-select');
 
+  const slider = document.querySelector('[data-range]');
+  let sliderActive = false;
+
   // init Panorama plugin start
   const panorama = new Panorama({
     panorama: '[data-panorama]',
-    btnPrev: '[data-panorama-left]',
-    btnNext: '[data-panorama-right]',
     numberOfFrames: 13,
-    startFrame: 10,
-    sourceMask: 'images/baby_carriage/frame-${index}-${color}.png',
-    preload: false,
+    preload: true,
     parameters: {
       color: colorSelect.value // set color according to current select value
     },
-    getSourceCallback: function (ui, frame) {
-      let source = ui.sourceMask.replace('${index}', frame.toString());
-
-      for (const key in ui.parameters) {
-        if (ui.parameters.hasOwnProperty(key)) {
-          source = source.replace('${' + key + '}', this.parameters[key].toString());
-        }
-      }
-
-      console.log(`source path: ${source}`);
-      return source;
-    },
-    onBeforeChange: function (ui, frame) {
-      console.clear();
-      console.log(`change frame from ${ui.curFrame}`);
-    },
     onAfterChange: function (ui, frame) {
-      console.log(`change frame to ${ui.curFrame} `);
+      if (!sliderActive) {
+        slider.noUiSlider.set(frame);
+      }
     }
   });
+
   // init Panorama plugin end
+
+  // change on range changes start
+  noUiSlider.create(slider, {
+    start: [1],
+    step: 1,
+    range: {
+      'min': [1],
+      'max': [13] // numberOfFrames
+    }
+  });
+
+  slider.noUiSlider.on('slide', function () {
+    sliderActive = true;
+    panorama.goToFrame(parseInt(this.get(), 10));
+  });
+
+  slider.noUiSlider.on('end', function () {
+    sliderActive = false;
+  });
+  // change on range changes end
+
+
+
 
   // change item color using select start
   colorSelect.addEventListener('change', function () {

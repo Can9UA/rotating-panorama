@@ -7,6 +7,8 @@
   <link rel="icon" type="image/x-icon" href="favicon.png">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/panorama.css">
+
+  <link rel="stylesheet" href="external_libraries/nouislider/nouislider.min.css">
 </head>
 <body>
   <div class="container">
@@ -34,13 +36,14 @@
     <div class="panorama">
       <div class="panorama-view" data-panorama="images/baby_carriage/frame-${index}-${color}.png"></div>
       <div class="panorama-pagination">
-        <button type="button" data-panorama-left><strong>&larr;</strong></button>
-        <button type="button" data-panorama-right><strong>&rarr;</strong></button>
+        <div data-range></div>
       </div>
     </div>
     <!-- panorama end -->
+
   </div>
   <script src="js/panorama.js"></script>
-  <script src="js/index.js"></script>
+  <script src="external_libraries/nouislider/nouislider.min.js"></script>
+  <script src="js/example-range.js"></script>
 </body>
 </html>
