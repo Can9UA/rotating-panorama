@@ -12,7 +12,7 @@ window.onload = function () {
       color: colorSelect.value // set color according to current select value
     },
     onLoad: function (ui) {
-      panorama.elems.panorama.classList.add('loaded');
+      ui.elems.panorama.classList.add('loaded');
     }
   });
 
