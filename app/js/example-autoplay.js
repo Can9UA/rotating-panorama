@@ -14,7 +14,7 @@ window.onload = function () {
       speed: 100,
       stopOnHover: false
     },
-    parameters: {
+    frameParams: {
       color: colorSelect.value
     }
   });
@@ -22,7 +22,7 @@ window.onload = function () {
 
   // change item color using select start
   colorSelect.addEventListener('change', function () {
-    panorama.parameters.update({
+    panorama.frameParams.update({
       color: this.value
     });
   })
@@ -32,7 +32,7 @@ window.onload = function () {
   const colorBtns = document.querySelectorAll('.color-btn');
   for (var i = 0, len = colorBtns.length; i < len; i++) {
     colorBtns[i].addEventListener('click', function () {
-      panorama.parameters.update({
+      panorama.frameParams.update({
         color: this.getAttribute('data-color')
       });
     })

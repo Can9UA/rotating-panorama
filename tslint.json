@@ -19,7 +19,8 @@
     "no-string-literal": false,
     "object-literal-key-quotes": false,
     "object-literal-shorthand": false,
-    "member-access": false
+    "member-access": false,
+    "no-bitwise": false
   },
   
   "jsRules": {
@@ -30,6 +31,7 @@
     "no-empty": false,
     "eofline": false,
     "no-string-literal": false,
-    "object-literal-key-quotes": [false, "as-needed"]
+    "object-literal-key-quotes": [false, "as-needed"],
+    "no-bitwise": false
   }
 }

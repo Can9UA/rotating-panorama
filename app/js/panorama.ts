@@ -39,7 +39,7 @@ interface IElems {
   image?: Element;
 }
 
-interface IParameters {
+interface IframeParams {
   update: any;
   [propName: string]: string;
 }
@@ -67,7 +67,7 @@ interface IOptions {
   scrollOnMove?: boolean;
   sourceMask?: string;
   autoplay?: IAutoplay;
-  parameters?: IParameters;
+  frameParams?: IframeParams;
   getSourceCallback?: Function;
   onBeforeChange?: Function;
   onAfterChange?: Function;
@@ -81,7 +81,7 @@ class Panorama {
   curFrame: number;
   move: boolean;
   scrollOnMove: boolean;
-  parameters: IParameters;
+  frameParams: IframeParams;
   autoplay: IAutoplay;
   interval?: any;
   loadedImages?: number;
@@ -103,7 +103,7 @@ class Panorama {
     this.sourceMask = opt.sourceMask || this.elems.panorama.getAttribute('data-panorama');
 
     if (!this.elems.panorama || !this.numberOfFrames || !this.sourceMask) {
-      console.error('Panorama plugin: Enter all required parameters!');
+      console.error('Panorama plugin: Enter all required frameParams!');
       return;
     }
 
@@ -118,11 +118,11 @@ class Panorama {
 
     this.preload = opt.preload;
     this.onLoad = opt.onLoad;
-    this.parameters = opt.parameters;
-    this.parameters.update = function (parameters: IParameters) {
-      for (const key in parameters) {
-        if (parameters.hasOwnProperty(key)) {
-          panorama.parameters[key] = parameters[key].toString();
+    this.frameParams = opt.frameParams;
+    this.frameParams.update = function (frameParams: IframeParams) {
+      for (const key in frameParams) {
+        if (frameParams.hasOwnProperty(key)) {
+          panorama.frameParams[key] = frameParams[key].toString();
         }
       }
       preloadedImages = []; // remove old cached values
@@ -193,9 +193,9 @@ class Panorama {
 
     let source: string = this.sourceMask.replace('${index}', frame.toString());
 
-    for (const key in this.parameters) {
-      if (this.parameters.hasOwnProperty(key)) {
-        source = source.replace('${' + key + '}', this.parameters[key].toString());
+    for (const key in this.frameParams) {
+      if (this.frameParams.hasOwnProperty(key)) {
+        source = source.replace('${' + key + '}', this.frameParams[key].toString());
       }
     }
 

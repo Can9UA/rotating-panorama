@@ -10,15 +10,15 @@ window.onload = function () {
     startFrame: 10,
     sourceMask: 'images/baby_carriage/frame-${index}-${color}.png',
     preload: false,
-    parameters: {
+    frameParams: {
       color: colorSelect.value // set color according to current select value
     },
     getSourceCallback: function (ui, frame) {
       let source = ui.sourceMask.replace('${index}', frame.toString());
 
-      for (const key in ui.parameters) {
-        if (ui.parameters.hasOwnProperty(key)) {
-          source = source.replace('${' + key + '}', this.parameters[key].toString());
+      for (const key in ui.frameParams) {
+        if (ui.frameParams.hasOwnProperty(key)) {
+          source = source.replace('${' + key + '}', this.frameParams[key].toString());
         }
       }
 
@@ -37,7 +37,7 @@ window.onload = function () {
 
   // change item color using select start
   colorSelect.addEventListener('change', function () {
-    panorama.parameters.update({
+    panorama.frameParams.update({
       color: this.value
     });
   })
@@ -47,7 +47,7 @@ window.onload = function () {
   const colorBtns = document.querySelectorAll('.color-btn');
   for (var i = 0, len = colorBtns.length; i < len; i++) {
     colorBtns[i].addEventListener('click', function () {
-      panorama.parameters.update({
+      panorama.frameParams.update({
         color: this.getAttribute('data-color')
       });
     })
