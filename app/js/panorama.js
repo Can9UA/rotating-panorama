@@ -66,9 +66,6 @@ class Panorama {
         this.onAfterChange = opt.onAfterChange;
         // autoplay
         this.autoplay = this.initAutoplay(opt.autoplay);
-        if (this.autoplay.enable) {
-            this.autoplay.startRotation();
-        }
         this.addElements(this.elems);
         this.addEventListeners(this.elems);
     }
@@ -297,6 +294,9 @@ class Panorama {
                 panorama.loadedImages++;
                 panorama.preloadImages(frame + 1);
                 if (panorama.loadedImages === panorama.numberOfFrames) {
+                    if (panorama.autoplay.enable) {
+                        panorama.autoplay.startRotation();
+                    }
                     if (typeof panorama.onLoad === 'function') {
                         panorama.onLoad(panorama);
                     }
