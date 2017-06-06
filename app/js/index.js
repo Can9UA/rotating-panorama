@@ -6,7 +6,7 @@ window.onload = function () {
     panorama: '[data-panorama]',
     btnPrev: '[data-panorama-left]',
     btnNext: '[data-panorama-right]',
-    numberOfFrames: 13,
+    numberOfFrames: 26,
     preload: true,
     frameParams: {
       color: colorSelect.value // set color according to current select value

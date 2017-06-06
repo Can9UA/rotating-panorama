@@ -192,7 +192,9 @@ class Panorama {
 
     for (const key in this.frameParams) {
       if (this.frameParams.hasOwnProperty(key)) {
-        source = source.replace('${' + key + '}', this.frameParams[key].toString());
+        const pattern = '\\$\\{' + key + '\\}';
+        const regExp = new RegExp(pattern, 'g');
+        source = source.replace(regExp, this.frameParams[key].toString());
       }
     }
 
