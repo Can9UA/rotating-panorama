@@ -30,13 +30,13 @@ const events = {
 };
 
 const body: HTMLBodyElement = document.querySelector('body');
-let preloadedImages: Element[] = [];
+let preloadedImages: HTMLElement[] = [];
 
 interface IElems {
-  panorama: Element;
-  btnNext?: Element;
-  btnPrev?: Element;
-  image?: Element;
+  panorama: HTMLElement;
+  btnNext?: HTMLElement;
+  btnPrev?: HTMLElement;
+  image?: HTMLElement;
 }
 
 interface IframeParams {
@@ -66,12 +66,18 @@ interface IOptions {
   preload?: boolean;
   scrollOnMove?: boolean;
   sourceMask?: string;
+  mode?: 'sprite' | any;
   autoplay?: IAutoplay;
   frameParams?: IframeParams;
   getSourceCallback?: Function;
   onBeforeChange?: Function;
   onAfterChange?: Function;
   onLoad?: Function;
+}
+
+interface IMode {
+  type: 'sprite' | any;
+  frameWidth: number;
 }
 
 class Panorama {
@@ -81,6 +87,7 @@ class Panorama {
   curFrame: number;
   move: boolean;
   scrollOnMove: boolean;
+  mode: IMode;
   frameParams: IframeParams;
   autoplay: IAutoplay;
   interval?: any;
@@ -106,6 +113,8 @@ class Panorama {
       console.error('Panorama plugin: Enter all required frameParams!');
       return;
     }
+
+    this.mode = this.initMode(opt);
 
     this.move = false;
 
@@ -170,13 +179,23 @@ class Panorama {
     }
 
     if (frame <= this.numberOfFrames && frame >= 1) {
+
+      if (this.mode.type === 'sprite') {
+        let position = frame * this.mode.frameWidth;
+        position = (position == 100) ? 100 - this.mode.frameWidth : position;
+
+        this.elems.image.style.transform = `translateX(-${position}%)`;
+      }
+
       this.elems.image.setAttribute('src', this.getSource(frame));
+
       this.curFrame = frame;
 
       if (!this.preload) {
         this.cacheImg(frame);
       }
     }
+
 
     if (typeof this.onAfterChange === 'function') {
       this.onAfterChange(this, frame);
@@ -242,9 +261,25 @@ class Panorama {
       this.autoplay.stopRotation();
     }
 
+    if (this.mode.type === 'sprite') {
+      window.removeEventListener('resize', this.eventsListeners['sprite resize']);
+    }
+
     clearInterval(this.interval);
     clearInterval(this.autoplay.interval);
     clearTimeout(this.autoplay.timeout);
+  }
+
+  private initMode(opt: IOptions) {
+    const mode = {
+      type: opt.mode
+    } as IMode;
+
+    if (mode.type === 'sprite') {
+      mode.frameWidth = 100 / opt.numberOfFrames;
+    }
+
+    return mode;
   }
 
   private getElems(opt: IOptions): IElems {
@@ -280,6 +315,16 @@ class Panorama {
       this.loadedImages = 0;
       this.preloadImages();
     }
+
+    if (this.mode.type === 'sprite') {
+      this.setSpriteStyles();
+    }
+  }
+
+  private setSpriteStyles() {
+    this.elems.image.style.width = this.elems.panorama.offsetWidth * this.numberOfFrames + 'px';
+    this.elems.image.style.height = 'auto';
+    this.elems.image.style.margin = '0 auto';
   }
 
   private addEventListeners(elems: IElems) {
@@ -418,6 +463,14 @@ class Panorama {
         elems.btnPrev.addEventListener('mouseup', this.eventsListeners['btnPrev mouseup']);
         elems.btnPrev.addEventListener('mouseleave', this.eventsListeners['btnPrev mouseup']);
       }
+    }
+
+    if (this.mode.type === 'sprite') {
+      this.eventsListeners['sprite resize'] = function () {
+        panorama.setSpriteStyles();
+      };
+
+      window.addEventListener('resize', this.eventsListeners['sprite resize']);
     }
   }
 

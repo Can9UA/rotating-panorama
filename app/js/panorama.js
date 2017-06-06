@@ -40,6 +40,7 @@ class Panorama {
             console.error('Panorama plugin: Enter all required frameParams!');
             return;
         }
+        this.mode = this.initMode(opt);
         this.move = false;
         this.scrollOnMove = (typeof opt.scrollOnMove === 'undefined') ? true : opt.scrollOnMove;
         this.curFrame = 1;
@@ -88,6 +89,11 @@ class Panorama {
             this.onBeforeChange(this, frame);
         }
         if (frame <= this.numberOfFrames && frame >= 1) {
+            if (this.mode.type === 'sprite') {
+                let position = frame * this.mode.frameWidth;
+                position = (position == 100) ? 100 - this.mode.frameWidth : position;
+                this.elems.image.style.transform = `translateX(-${position}%)`;
+            }
             this.elems.image.setAttribute('src', this.getSource(frame));
             this.curFrame = frame;
             if (!this.preload) {
@@ -143,9 +149,21 @@ class Panorama {
         if (this.autoplay && this.autoplay.enable) {
             this.autoplay.stopRotation();
         }
+        if (this.mode.type === 'sprite') {
+            window.removeEventListener('resize', this.eventsListeners['sprite resize']);
+        }
         clearInterval(this.interval);
         clearInterval(this.autoplay.interval);
         clearTimeout(this.autoplay.timeout);
+    }
+    initMode(opt) {
+        const mode = {
+            type: opt.mode
+        };
+        if (mode.type === 'sprite') {
+            mode.frameWidth = 100 / opt.numberOfFrames;
+        }
+        return mode;
     }
     getElems(opt) {
         const elems = {
@@ -176,6 +194,14 @@ class Panorama {
             this.loadedImages = 0;
             this.preloadImages();
         }
+        if (this.mode.type === 'sprite') {
+            this.setSpriteStyles();
+        }
+    }
+    setSpriteStyles() {
+        this.elems.image.style.width = this.elems.panorama.offsetWidth * this.numberOfFrames + 'px';
+        this.elems.image.style.height = 'auto';
+        this.elems.image.style.margin = '0 auto';
     }
     addEventListeners(elems) {
         const panorama = this;
@@ -283,6 +309,12 @@ class Panorama {
                 elems.btnPrev.addEventListener('mouseup', this.eventsListeners['btnPrev mouseup']);
                 elems.btnPrev.addEventListener('mouseleave', this.eventsListeners['btnPrev mouseup']);
             }
+        }
+        if (this.mode.type === 'sprite') {
+            this.eventsListeners['sprite resize'] = function () {
+                panorama.setSpriteStyles();
+            };
+            window.addEventListener('resize', this.eventsListeners['sprite resize']);
         }
     }
     preloadImages(frame = 1) {

@@ -3,6 +3,9 @@
   cursor: -webkit-grab;
   cursor: grab;
 }
+.panorama-view {
+  overflow-x: hidden;
+}
 .panorama-view img {
   width: 100%;
   height: auto;
