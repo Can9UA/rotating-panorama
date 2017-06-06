@@ -450,15 +450,19 @@ class Panorama {
     const img = document.createElement('img');
     img.setAttribute('src', this.getSource(frame));
 
-    function filter(element) {
-      return element.getAttribute('src') === img.getAttribute('src');
-    }
-
-    if (preloadedImages.findIndex(filter) === -1) {
+    if (!this.imgCached(preloadedImages, img)) {
       preloadedImages.push(img);
     }
 
     return img;
+  }
+
+  private imgCached(arrImages, img) {
+    const index = arrImages.findIndex((elem) => {
+      return elem.getAttribute('src') === img.getAttribute('src');
+    });
+
+    return index !== -1;
   }
 
   private initAutoplay(options: IAutoplay) {
