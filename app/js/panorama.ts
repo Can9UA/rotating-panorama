@@ -1,7 +1,7 @@
 'use strict';
 // polyfills for findIndex in ES5
 if (!Array.prototype.findIndex as any) {
-  Array.prototype.findIndex = function(predicate) {
+  Array.prototype.findIndex = function (predicate) {
     if (this == null) {
       throw new TypeError('Array.prototype.findIndex called on null or undefined');
     }
@@ -15,7 +15,9 @@ if (!Array.prototype.findIndex as any) {
 
     for (let i = 0; i < length; i++) {
       value = list[i];
-      if (predicate.call(thisArg, value, i, list)) { return i; }
+      if (predicate.call(thisArg, value, i, list)) {
+        return i;
+      }
     }
     return -1;
   };
@@ -39,7 +41,7 @@ interface IElems {
   image?: HTMLElement;
 }
 
-interface IframeParams {
+interface IFrameParams {
   update: any;
   [propName: string]: string;
 }
@@ -66,9 +68,9 @@ interface IOptions {
   preload?: boolean;
   scrollOnMove?: boolean;
   sourceMask?: string;
-  mode?: 'sprite' | any;
+  mode?: IMode;
   autoplay?: IAutoplay;
-  frameParams?: IframeParams;
+  frameParams?: IFrameParams;
   getSourceCallback?: Function;
   onBeforeChange?: Function;
   onAfterChange?: Function;
@@ -76,8 +78,9 @@ interface IOptions {
 }
 
 interface IMode {
-  type: 'sprite' | any;
-  frameWidth: number;
+  type?: 'sprite' | any;
+  reverse?: boolean;
+  frameWidth?: number;
 }
 
 class Panorama {
@@ -88,7 +91,7 @@ class Panorama {
   move: boolean;
   scrollOnMove: boolean;
   mode: IMode;
-  frameParams: IframeParams;
+  frameParams: IFrameParams;
   autoplay: IAutoplay;
   interval?: any;
   loadedImages?: number;
@@ -128,7 +131,7 @@ class Panorama {
     this.preload = opt.preload;
     this.onLoad = opt.onLoad;
     this.frameParams = opt.frameParams;
-    this.frameParams.update = function (frameParams: IframeParams) {
+    this.frameParams.update = function (frameParams: IFrameParams) {
       for (const key in frameParams) {
         if (frameParams.hasOwnProperty(key)) {
           panorama.frameParams[key] = frameParams[key].toString();
@@ -154,23 +157,11 @@ class Panorama {
   }
 
   prevFrame() {
-    let frame = this.curFrame - 1;
-
-    if (frame < 1) {
-      frame = this.numberOfFrames;
-    }
-
-    this.goToFrame(frame);
+    this.mode.reverse ? this.goToNextFrame() : this.goToPrevFrame();
   }
 
   nextFrame() {
-    let frame = this.curFrame + 1;
-
-    if (frame > this.numberOfFrames) {
-      frame = 1;
-    }
-
-    this.goToFrame(frame);
+    this.mode.reverse ? this.goToPrevFrame() : this.goToNextFrame();
   }
 
   goToFrame(frame: number) {
@@ -182,7 +173,7 @@ class Panorama {
 
       if (this.mode.type === 'sprite') {
         let position = frame * this.mode.frameWidth;
-        position = (position == 100) ? 100 - this.mode.frameWidth : position;
+        position = (position === 100) ? 100 - this.mode.frameWidth : position;
 
         this.elems.image.style.transform = `translateX(-${position}%)`;
       }
@@ -195,7 +186,6 @@ class Panorama {
         this.cacheImg(frame);
       }
     }
-
 
     if (typeof this.onAfterChange === 'function') {
       this.onAfterChange(this, frame);
@@ -270,10 +260,28 @@ class Panorama {
     clearTimeout(this.autoplay.timeout);
   }
 
-  private initMode(opt: IOptions) {
-    const mode = {
-      type: opt.mode
-    } as IMode;
+  private goToPrevFrame() {
+    let frame = this.curFrame - 1;
+
+    if (frame < 1) {
+      frame = this.numberOfFrames;
+    }
+
+    this.goToFrame(frame);
+  }
+
+  private goToNextFrame() {
+    let frame = this.curFrame + 1;
+
+    if (frame > this.numberOfFrames) {
+      frame = 1;
+    }
+
+    this.goToFrame(frame);
+  }
+
+  private initMode(opt: IOptions): IMode {
+    const mode: IMode = opt.mode || {};
 
     if (mode.type === 'sprite') {
       mode.frameWidth = 100 / opt.numberOfFrames;

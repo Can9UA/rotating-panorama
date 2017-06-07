@@ -8,7 +8,10 @@ window.onload = function () {
     btnNext: '[data-panorama-right]',
     numberOfFrames: 26,
     preload: true,
-    mode: 'sprite',
+    mode: {
+      type: 'sprite',
+      reverse: true
+    },
     frameParams: {
       color: colorSelect.value // set color according to current select value
     },

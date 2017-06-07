@@ -71,18 +71,10 @@ class Panorama {
         this.addEventListeners(this.elems);
     }
     prevFrame() {
-        let frame = this.curFrame - 1;
-        if (frame < 1) {
-            frame = this.numberOfFrames;
-        }
-        this.goToFrame(frame);
+        this.mode.reverse ? this.goToNextFrame() : this.goToPrevFrame();
     }
     nextFrame() {
-        let frame = this.curFrame + 1;
-        if (frame > this.numberOfFrames) {
-            frame = 1;
-        }
-        this.goToFrame(frame);
+        this.mode.reverse ? this.goToPrevFrame() : this.goToNextFrame();
     }
     goToFrame(frame) {
         if (typeof this.onBeforeChange === 'function') {
@@ -91,7 +83,7 @@ class Panorama {
         if (frame <= this.numberOfFrames && frame >= 1) {
             if (this.mode.type === 'sprite') {
                 let position = frame * this.mode.frameWidth;
-                position = (position == 100) ? 100 - this.mode.frameWidth : position;
+                position = (position === 100) ? 100 - this.mode.frameWidth : position;
                 this.elems.image.style.transform = `translateX(-${position}%)`;
             }
             this.elems.image.setAttribute('src', this.getSource(frame));
@@ -156,10 +148,22 @@ class Panorama {
         clearInterval(this.autoplay.interval);
         clearTimeout(this.autoplay.timeout);
     }
+    goToPrevFrame() {
+        let frame = this.curFrame - 1;
+        if (frame < 1) {
+            frame = this.numberOfFrames;
+        }
+        this.goToFrame(frame);
+    }
+    goToNextFrame() {
+        let frame = this.curFrame + 1;
+        if (frame > this.numberOfFrames) {
+            frame = 1;
+        }
+        this.goToFrame(frame);
+    }
     initMode(opt) {
-        const mode = {
-            type: opt.mode
-        };
+        const mode = opt.mode || {};
         if (mode.type === 'sprite') {
             mode.frameWidth = 100 / opt.numberOfFrames;
         }
